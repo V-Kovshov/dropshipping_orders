@@ -1,0 +1,9 @@
+runbot.py -> [LINE:47] -> INFO     [2023-07-15 13:07:58,150] -> Run
+dispatcher.py -> [LINE:493] -> INFO     [2023-07-15 13:07:58,768] -> Start polling
+dispatcher.py -> [LINE:329] -> INFO     [2023-07-15 13:07:58,842] -> Run polling for bot @roza_shoes_orders_bot id=6007246606 - 'Заказы Roza Shoes'
+start.py -> [LINE:27] -> INFO     [2023-07-15 13:08:01,667] -> Enters in func
+start.py -> [LINE:29] -> INFO     [2023-07-15 13:08:01,686] -> Got data
+dispatcher.py -> [LINE:160] -> INFO     [2023-07-15 13:08:01,951] -> Update id=729452691 is handled. Duration 300 ms by bot id=6007246606
+dispatcher.py -> [LINE:439] -> WARNING  [2023-07-15 13:08:07,775] -> Received SIGINT signal
+dispatcher.py -> [LINE:345] -> INFO     [2023-07-15 13:08:07,776] -> Polling stopped for bot @roza_shoes_orders_bot id=6007246606 - 'Заказы Roza Shoes'
+dispatcher.py -> [LINE:520] -> INFO     [2023-07-15 13:08:07,776] -> Polling stopped
