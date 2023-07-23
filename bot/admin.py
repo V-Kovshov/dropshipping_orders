@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from bot.models import Shoes, Size, SizeQuantity
+from bot.models import Shoes, SizeQuantity
 
 
 class SizeInline(admin.TabularInline):
@@ -25,17 +25,3 @@ class ShoesAdmin(admin.ModelAdmin):
 			return mark_safe(f"<img src='{object.image.url}' width=100>")
 
 	get_html_photo.short_description = 'Фото моделі'
-
-
-# admin.site.register(Size)
-
-# @admin.register(Size)
-# class SizeAdmin(admin.ModelAdmin):
-# 	ordering = ('size', )
-
-
-
-
-
-
-
