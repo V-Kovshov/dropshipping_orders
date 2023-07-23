@@ -3,46 +3,24 @@ from django.db import models
 
 
 
-# class UserTG(models.Model):
-#     tg_id = models.IntegerField(verbose_name='id', unique=True)
-#     name = models.CharField(max_length=12, verbose_name="Ім'я дроппера")
-#     username = models.CharField(max_length=32, verbose_name="Нік в телеграмі")
-#     phone = models.IntegerField(verbose_name="Телефон дроппера")
+class UserTG(models.Model):
+    tg_id = models.IntegerField(verbose_name='id', unique=True)
+    name = models.CharField(max_length=12, verbose_name="Ім'я дроппера")
+    username = models.CharField(max_length=32, verbose_name="Нік в телеграмі")
+    phone = models.IntegerField(verbose_name="Телефон дроппера")
+    bank_card = models.CharField(max_length=16, verbose_name='Картка для виплат')
 
 
 # class OrderTG(models.Model):
-#     date = models.DateField(auto_now_add=True)
-#     payment = models.CharField(max_length=12)
-#     client_name = models.CharField(max_length=64)  # Имя заказчика
+#     date = models.DateField(auto_now_add=True, verbose_name='Дата замовлення')
+#     payment = models.CharField(max_length=12, verbose_name='')
+#     client_name = models.CharField(max_length=64)
 #     data = models.TextField()  # Данные заказа
 #     postpayment = models.CharField(max_length=5)
 #     model = models.CharField(max_length=12)
 #     manufacturer = models.CharField(max_length=32)
 #     invoice = models.IntegerField()
-#     # TODO: Подумать как будет удаляться заказ
 #     user_id = models.ForeignKey(UserTG, on_delete=models.CASCADE)
-
-
-
-
-
-class Size(models.Model):
-    size = models.PositiveIntegerField(
-        verbose_name='Розмір взуття',
-        validators=[
-            MinValueValidator(34),
-            MaxValueValidator(41)
-        ],
-        default=34,
-        help_text='Можна обрати розміри з 34 по 41 (включно)'
-    )
-
-    class Meta:
-        verbose_name = 'Розмір'
-        verbose_name_plural = 'Розміри'
-
-    def __str__(self):
-        return f"Розмір {self.size}"
 
 
 class Shoes(models.Model):
@@ -59,14 +37,6 @@ class Shoes(models.Model):
     description = models.TextField(
         verbose_name='Опис взуття'
     )
-    # quantity = models.ForeignKey(
-    #     to=Size,
-    #     # through='SizeQuantity',
-    #     related_name='SizeQuantity_list',
-    #     verbose_name='Наявність взуття',
-    #     on_delete=models.PROTECT,
-    #     null=True
-    # )
     price_opt = models.DecimalField(
         max_digits=4,
         decimal_places=2,
@@ -92,7 +62,6 @@ class Shoes(models.Model):
 
 
 class SizeQuantity(models.Model):
-    # size = models.ForeignKey(to=Size, on_delete=models.CASCADE, verbose_name='Розміри')
     size = models.PositiveIntegerField(
         verbose_name='Розмір взуття',
         validators=[
@@ -112,5 +81,4 @@ class SizeQuantity(models.Model):
         verbose_name_plural = 'Розміри та їх наявність'
 
     def __str__(self):
-        # return f"{str(self.size.size)} - {str(self.quantity)}"
         return f"{str(self.size)} - {str(self.quantity)}"
