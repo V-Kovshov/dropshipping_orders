@@ -4,9 +4,9 @@ import os
 os.environ['DJANGO_SETTINGS_MODULE'] = 'dropshipping_orders.settings'
 django.setup()
 
-from bot.models import Shoes, SizeQuantity
+from bot.models import Shoes, SizeQuantity, UserTG
 from bot.keyboards.base import reply
-from bot.utils import db
+from bot.utils.db import check_user_in_db
 
 import logging
 
@@ -24,12 +24,13 @@ async def get_start(msg: types.Message, bot: Bot) -> None:
 					reply_markup=reply.start_keyboard())
 
 
-# @router.message(F.text == 'Оформити замовлення')
-# async def get_shoes(msg: types.Message, bot: Bot):
-# 	logging.info('Enters in func')
-# 	shoes = await Shoes.objects.aget(article='Модель к1703п лаванда')
-# 	# async for i in shoes.sizequantity_set.filter(shoes=shoes):
-# 	# 	print(i)
-# 	size = await db.get_size(shoes)
-# 	for s in size:
-# 		print(s)
+@router.message(F.text == 'Оформити замовлення')
+async def get_shoes(msg: types.Message, bot: Bot):
+	user_id = msg.from_user.id
+	user_in_db = await check_user_in_db(user_id=user_id)
+	if user_in_db > 0:
+		pass
+	else:
+		user_msg = 'Для початку давай зареєструємо твій обліковий запис\n\n' \
+					'Щоб почати реєстрацію - натисніть /registration'
+		await msg.answer(user_msg)
