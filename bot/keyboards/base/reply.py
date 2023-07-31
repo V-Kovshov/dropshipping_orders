@@ -9,4 +9,12 @@ def start_keyboard():
     kb_builder.button(text='Підтримка')
     kb_builder.adjust(1, 2)
 
-    return kb_builder.as_markup(resize_keyboard=True, input_field_placeholder='Просто натисни на одну з кнопок')
+    return kb_builder.as_markup(resize_keyboard=True, input_field_placeholder='Просто натисни на одну з кнопок', one_time_keyboard=True)
+
+
+def get_phone_keyboard():
+    kb_builder = ReplyKeyboardBuilder()
+
+    kb_builder.button(text='Відправити свій номер телефону', request_contact=True)
+
+    return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
