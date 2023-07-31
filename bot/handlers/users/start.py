@@ -32,5 +32,5 @@ async def get_shoes(msg: types.Message, bot: Bot):
 		pass
 	else:
 		user_msg = 'Для початку давай зареєструємо твій обліковий запис\n\n' \
-					'Щоб почати реєстрацію - натисніть /registration'
+					'Щоб почати реєстрацію - натисніть\n/registration'
 		await msg.answer(user_msg)
