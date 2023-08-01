@@ -4,23 +4,43 @@ from django.db import models
 
 
 class UserTG(models.Model):
-    tg_id = models.IntegerField(verbose_name='id', unique=True)
+    tg_id = models.IntegerField(verbose_name='id')
     name = models.CharField(max_length=12, verbose_name="Ім'я дроппера")
     username = models.CharField(max_length=32, verbose_name="Нік в телеграмі")
-    phone = models.IntegerField(verbose_name="Телефон дроппера")
+    phone = models.CharField(max_length=13, verbose_name="Телефон дроппера")
     bank_card = models.CharField(max_length=16, verbose_name='Картка для виплат')
+    balance = models.FloatField(verbose_name='Баланс', default=0)
+
+    def __str__(self):
+        return self.name
+
+    class Meta:
+        verbose_name = 'дропер'
+        verbose_name_plural = 'Усі дропери'
 
 
-# class OrderTG(models.Model):
-#     date = models.DateField(auto_now_add=True, verbose_name='Дата замовлення')
-#     payment = models.CharField(max_length=12, verbose_name='')
-#     client_name = models.CharField(max_length=64)
-#     data = models.TextField()  # Данные заказа
-#     postpayment = models.CharField(max_length=5)
-#     model = models.CharField(max_length=12)
-#     manufacturer = models.CharField(max_length=32)
-#     invoice = models.IntegerField()
-#     user_id = models.ForeignKey(UserTG, on_delete=models.CASCADE)
+class OrderTG(models.Model):
+    user_id = models.ForeignKey(UserTG, on_delete=models.DO_NOTHING, verbose_name='Здав замовлення', null=True, blank=True)
+    user_instagram = models.CharField(max_length=64, verbose_name='Нік в інстаграмі', null=True, blank=True)
+    shoes_model = models.ForeignKey(to='Shoes', on_delete=models.DO_NOTHING, verbose_name='Модель замовлення')
+    shoes_size = models.ForeignKey(to='SizeQuantity', on_delete=models.DO_NOTHING, verbose_name='Розмір', null=True, blank=True)
+    date = models.DateField(auto_now_add=True, verbose_name='Дата замовлення')
+    client_name = models.CharField(max_length=64, verbose_name='ПІБ клієнта')
+    client_phone = models.CharField(max_length=13, verbose_name='Телефон клієнта')
+    data = models.TextField(verbose_name='Інші дані для відправки')
+    postpayment = models.IntegerField(verbose_name='Накладний платіж', default=0)
+    screen_payment = models.ImageField(upload_to=f'screen_payment/{user_id}')
+    balance = models.FloatField(verbose_name='Баланс с замовлення', default=0.0)
+    invoice = models.CharField(max_length=14, verbose_name='ТТН', null=True, blank=True)
+
+    def __str__(self):
+        if self.user_id is not None:
+            return f"Замовлення від {self.user_id}"
+        return f'Замовлення від {self.user_instagram}'
+
+    class Meta:
+        verbose_name = 'замовлення'
+        verbose_name_plural = 'Усі замовлення'
 
 
 class Shoes(models.Model):
@@ -48,8 +68,8 @@ class Shoes(models.Model):
         verbose_name='Ціна РОЗ'
     )
     image = models.ImageField(
-        upload_to=f'shoes_images',
-        verbose_name='Фото'
+        upload_to='shoes_images',
+        verbose_name='Фото',
     )
 
     class Meta:
@@ -76,9 +96,10 @@ class SizeQuantity(models.Model):
         verbose_name='Наявність',
         default=0,
     )
+    centimeters = models.CharField(max_length=10, verbose_name='Заміри')
 
     class Meta:
         verbose_name_plural = 'Розміри та їх наявність'
 
     def __str__(self):
-        return f"{str(self.size)} - {str(self.quantity)}"
+        return f"{str(self.size)}({str(self.centimeters)}) - {str(self.quantity)}"
