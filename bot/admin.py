@@ -58,9 +58,8 @@ class OrderTGAdmin(admin.ModelAdmin):
 		user_id = fields.index('user_id')
 		user_instagram = fields.index('user_instagram')
 		screen_payment = fields.index('screen_payment')
-		shoes_size = fields.index('shoes_size')
 		if request.user:
 			fields = tuple(i for i in fields if fields.index(i) not in [user_id, screen_payment])
 		else:
-			fields = tuple(i for i in fields if fields.index(i) != [user_instagram, shoes_size])
+			fields = tuple(i for i in fields if fields.index(i) != [user_instagram])
 		return fields
