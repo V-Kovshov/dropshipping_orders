@@ -2,7 +2,6 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
 
-
 class UserTG(models.Model):
     tg_id = models.IntegerField(verbose_name='id')
     name = models.CharField(max_length=12, verbose_name="Ім'я дроппера")
@@ -20,10 +19,21 @@ class UserTG(models.Model):
 
 
 class OrderTG(models.Model):
+    SIZES_LIST = [
+        ('34', 34),
+        ('35', 35),
+        ('36', 36),
+        ('37', 37),
+        ('38', 38),
+        ('39', 39),
+        ('40', 40),
+        ('41', 41),
+    ]
+
     user_id = models.ForeignKey(UserTG, on_delete=models.DO_NOTHING, verbose_name='Здав замовлення', null=True, blank=True)
     user_instagram = models.CharField(max_length=64, verbose_name='Нік в інстаграмі', null=True, blank=True)
     shoes_model = models.ForeignKey(to='Shoes', on_delete=models.DO_NOTHING, verbose_name='Модель замовлення')
-    shoes_size = models.ForeignKey(to='SizeQuantity', on_delete=models.DO_NOTHING, verbose_name='Розмір', null=True, blank=True)
+    shoes_size = models.CharField(max_length=2, choices=SIZES_LIST, verbose_name='Розмір', null=True, blank=True)
     date = models.DateField(auto_now_add=True, verbose_name='Дата замовлення')
     client_name = models.CharField(max_length=64, verbose_name='ПІБ клієнта')
     client_phone = models.CharField(max_length=13, verbose_name='Телефон клієнта')
@@ -78,7 +88,7 @@ class Shoes(models.Model):
 
 
     def __str__(self):
-        return f"Модель {self.article}"
+        return self.article
 
 
 class SizeQuantity(models.Model):
