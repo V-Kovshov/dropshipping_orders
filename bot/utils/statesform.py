@@ -5,3 +5,4 @@ class FSMRegisterForm(StatesGroup):
 	GET_NAME = State()
 	GET_PHONE = State()
 	GET_CARD = State()
+	FINISH_REGISTER = State()
