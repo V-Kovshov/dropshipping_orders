@@ -44,10 +44,3 @@ class Command(BaseCommand):
 
 	def handle(self, *args, **options):
 		asyncio.run(run())
-
-
-
-# logging.basicConfig(level=logging.INFO,
-# 					format='%(filename)s -> [LINE:%(lineno)d] -> %(levelname)-8s [%(asctime)s] -> %(message)s',
-# 					filename=f'logs.log',
-# 					filemode='w')
