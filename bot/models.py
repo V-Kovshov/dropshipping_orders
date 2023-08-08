@@ -7,7 +7,7 @@ class UserTG(models.Model):
     name = models.CharField(max_length=12, verbose_name="Ім'я дроппера")
     username = models.CharField(max_length=32, verbose_name="Нік в телеграмі")
     phone = models.CharField(max_length=13, verbose_name="Телефон дроппера")
-    bank_card = models.CharField(max_length=16, verbose_name='Картка для виплат')
+    bank_card = models.CharField(max_length=20, verbose_name='Картка для виплат')
     balance = models.FloatField(verbose_name='Баланс', default=0)
 
     def __str__(self):
