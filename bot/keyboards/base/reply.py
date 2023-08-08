@@ -18,3 +18,15 @@ def get_phone_keyboard():
     kb_builder.button(text='Відправити свій номер телефону', request_contact=True)
 
     return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
+
+
+def confirmation_data():
+    kb_builder = ReplyKeyboardBuilder()
+
+    kb_builder.button(text='Все вірно, завершити реєстрацію')
+    kb_builder.button(text='Є помилкові дані, почнемо заново')
+    kb_builder.button(text='Відмінити реєстрацію')
+
+    kb_builder.adjust(1, 1, 1)
+
+    return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
