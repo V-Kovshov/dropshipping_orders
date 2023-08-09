@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO,
 
 
 @sync_to_async
-def check_user_in_db(user_id):
+def check_user_in_db(user_id) -> bool:
     try:
         user = UserTG.objects.get(tg_id=user_id)
         logging.info('Получили юзера')
