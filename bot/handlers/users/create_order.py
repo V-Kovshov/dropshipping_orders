@@ -9,7 +9,7 @@ router = Router()
 
 
 @router.message(F.text == '🛒Оформити замовлення')
-async def command_registration(msg: Message, bot: Bot):
+async def place_order(msg: Message, bot: Bot):
 	user_id = msg.from_user.id
 	user_in_db = await check_user_in_db(user_id=user_id)
 	if user_in_db:
