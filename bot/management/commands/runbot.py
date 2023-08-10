@@ -27,8 +27,8 @@ async def run():
 	dp.shutdown.register(end_bot)
 
 	dp.include_router(start.router)
-	dp.include_router(registration.router)
 	dp.include_router(create_order.router)
+	dp.include_router(registration.router)
 
 	try:
 		await dp.start_polling(bot)
