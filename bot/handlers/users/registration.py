@@ -64,6 +64,7 @@ async def finish_register(msg: Message, state: FSMContext) -> None:
         await registration_user(context_data)
         await msg.answer('Ви успішно зареєстровані🎉', reply_markup=reply.start_keyboard())
     elif msg.text == '📛Є помилкові дані, почнемо заново':
+        await state.clear()
         await msg.answer('Натисніть <u><b>/registration</b></u>,\nдля того, щоб розпочати заново.')
     elif msg.text == '❌Відмінити реєстрацію':
         await state.clear()
