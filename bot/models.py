@@ -39,7 +39,8 @@ class OrderTG(models.Model):
     client_phone = models.CharField(max_length=13, verbose_name='Телефон клієнта')
     data = models.TextField(verbose_name='Інші дані для відправки')
     postpayment = models.IntegerField(verbose_name='Накладний платіж', default=0)
-    screen_payment = models.ImageField(upload_to=f'screen_payment/{user_id}')
+    balance_pay = models.IntegerField(verbose_name='Аванс с балансу', default=0)
+    screen_payment = models.ImageField(upload_to=f'screen_payment/{user_id}', verbose_name='Скрін оплати')
     balance = models.FloatField(verbose_name='Баланс с замовлення', default=0.0)
     invoice = models.CharField(max_length=14, verbose_name='ТТН', null=True, blank=True)
 
