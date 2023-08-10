@@ -4,13 +4,9 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
 
-from bot.handlers.users import start
-from bot.handlers.users import registration
+from bot.handlers.users import start, registration, create_order
 from bot.config import settings
 from bot.utils.commands import set_commands
-
-import logging
-
 
 
 async def start_bot(bot: Bot) -> None:
@@ -32,6 +28,7 @@ async def run():
 
 	dp.include_router(start.router)
 	dp.include_router(registration.router)
+	dp.include_router(create_order.router)
 
 	try:
 		await dp.start_polling(bot)
@@ -40,7 +37,7 @@ async def run():
 
 
 class Command(BaseCommand):
-	help = 'RIN COMMAND: python manage.py runbot'
+	help = 'RUN COMMAND: python manage.py runbot'
 
 	def handle(self, *args, **options):
 		asyncio.run(run())
