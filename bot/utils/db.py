@@ -29,3 +29,10 @@ def registration_user(context_data) -> None:
     balance = context_data.get('balance')
 
     UserTG.objects.create(tg_id=tg_id, name=name, username=username, phone=phone, bank_card=bank_card, balance=balance)
+
+
+class Order:
+    @sync_to_async
+    def check_article(self, article):
+        shoes = Shoes.objects.filter(article__icontains=article)
+        return list(shoes) if shoes.count() >= 1 else False
