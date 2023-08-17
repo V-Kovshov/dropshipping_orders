@@ -33,6 +33,16 @@ def registration_user(context_data) -> None:
 
 class Order:
     @sync_to_async
+    def get_model_sizes(self, model_id):
+        sizes = SizeQuantity.objects.filter(shoes=model_id)
+        return sizes
+
+    @sync_to_async
     def check_article(self, article):
         shoes = Shoes.objects.filter(article__icontains=article)
         return list(shoes) if shoes.count() >= 1 else False
+
+    @sync_to_async
+    def get_model(self, model_id):
+        shoes = Shoes.objects.get(id=model_id)
+        return shoes
