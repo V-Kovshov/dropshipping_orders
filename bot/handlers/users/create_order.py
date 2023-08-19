@@ -1,9 +1,8 @@
 import logging
 
-from aiogram import Router, Bot, F
+from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.fsm.context import FSMContext
-from asgiref.sync import sync_to_async
 
 from bot.keyboards.base import reply
 from bot.keyboards.inline.order_kb import get_inline_shoes, get_inline_size
@@ -24,7 +23,7 @@ logging.basicConfig(level=logging.INFO,
 @router.message(F.text == '🛒Оформити замовлення')
 async def place_order(msg: Message, state: FSMContext) -> None:
 	"""
-	Хендлер перевіряє чи клінєнт зареєстрований та отримує від клієнта артикул товару
+	Хендлер перевіряє чи клієнт зареєстрований та отримує від клієнта артикул товару
 
 	:param msg:
 	:param state:
@@ -37,7 +36,7 @@ async def place_order(msg: Message, state: FSMContext) -> None:
 		await state.set_state(FSMCreateOrder.CHOOSE_MODEL)
 	else:
 		user_msg = '🤔Для початку давай зареєструємо твій обліковий запис.\n\n' \
-				   'Щоб почати реєстрацію - натисніть\n<u><b>/registration</b></u>'
+				'Щоб почати реєстрацію - натисніть\n<u><b>/registration</b></u>'
 		await msg.answer(user_msg)
 
 
