@@ -9,8 +9,8 @@ class FSMRegisterForm(StatesGroup):
 
 
 class FSMCreateOrder(StatesGroup):
-	SHOES_MODEL = State()
-	SHOES_SIZE = State()
+	CHOOSE_MODEL = State()
+	CHOOSE_SIZE = State()
 	CLIENT_NAME = State()
 	CLIENT_PHONE = State()
 	OTHER_DATA = State()
