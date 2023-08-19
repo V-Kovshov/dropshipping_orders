@@ -33,16 +33,25 @@ def registration_user(context_data) -> None:
 
 class Order:
     @sync_to_async
-    def get_model_sizes(self, model_id):
+    def get_model_sizes(self, model_id: int) -> list:
         sizes = SizeQuantity.objects.filter(shoes=model_id)
-        return sizes
+        size_lst = []
+        for size in sizes:
+            size_lst.append(size)
+        return size_lst
 
     @sync_to_async
-    def check_article(self, article):
+    def check_article(self, article: str) -> list | bool:
         shoes = Shoes.objects.filter(article__icontains=article)
         return list(shoes) if shoes.count() >= 1 else False
 
     @sync_to_async
-    def get_model(self, model_id):
+    def get_model(self, model_id: int) -> Shoes:
         shoes = Shoes.objects.get(id=model_id)
         return shoes
+
+    @sync_to_async
+    def get_balance(self, user_id: int):
+        user = UserTG.objects.get(tg_id=user_id)
+        user_balance = int(user.balance)
+        return user_balance
