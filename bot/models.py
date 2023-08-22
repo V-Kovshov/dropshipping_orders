@@ -69,12 +69,12 @@ class Shoes(models.Model):
         verbose_name='Опис взуття'
     )
     price_opt = models.DecimalField(
-        max_digits=4,
+        max_digits=6,
         decimal_places=2,
         verbose_name='Ціна ОПТ'
     )
     price_outlet = models.DecimalField(
-        max_digits=4,
+        max_digits=6,
         decimal_places=2,
         verbose_name='Ціна РОЗ'
     )
