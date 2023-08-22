@@ -60,7 +60,7 @@ def check_data_order_kb() -> ReplyKeyboardMarkup:
     kb_builder = ReplyKeyboardBuilder()
 
     kb_builder.button(text='Підтверджую')
-    kb_builder.button(text='Є помилкові дані')
+    kb_builder.button(text='Відмінити')
 
     kb_builder.adjust(1)
 
