@@ -7,7 +7,7 @@ from bot.utils.db import Order
 order = Order()
 
 
-def get_inline_shoes(*args):
+def get_inline_shoes(*args) -> InlineKeyboardMarkup:
 	models_lst = list(*args)
 	kb = InlineKeyboardBuilder()
 	for model in models_lst:
@@ -16,7 +16,7 @@ def get_inline_shoes(*args):
 	return kb.as_markup()
 
 
-def get_inline_size(sizes):
+def get_inline_size(sizes) -> InlineKeyboardMarkup:
 	kb = InlineKeyboardBuilder()
 	for size in sizes:
 		kb.add(InlineKeyboardButton(text=str(size), callback_data=str(size.id)))
