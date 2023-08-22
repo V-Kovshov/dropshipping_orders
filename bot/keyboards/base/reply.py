@@ -1,7 +1,7 @@
-from aiogram.utils.keyboard import ReplyKeyboardBuilder
+from aiogram.utils.keyboard import ReplyKeyboardBuilder, ReplyKeyboardMarkup
 
 
-def start_keyboard():
+def start_keyboard() -> ReplyKeyboardMarkup:
     kb_builder = ReplyKeyboardBuilder()
 
     kb_builder.button(text='👤Кабінет')
@@ -12,7 +12,7 @@ def start_keyboard():
     return kb_builder.as_markup(resize_keyboard=True, input_field_placeholder='Оберіть один із варіантів', one_time_keyboard=True)
 
 
-def get_phone_keyboard():
+def get_phone_keyboard() -> ReplyKeyboardMarkup:
     kb_builder = ReplyKeyboardBuilder()
 
     kb_builder.button(text='☎️Відправити свій номер телефону', request_contact=True)
@@ -20,7 +20,7 @@ def get_phone_keyboard():
     return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
 
 
-def confirmation_data():
+def confirmation_data() -> ReplyKeyboardMarkup:
     kb_builder = ReplyKeyboardBuilder()
 
     kb_builder.button(text='✅Все вірно, підтверджую реєстрацію')
@@ -30,3 +30,39 @@ def confirmation_data():
     kb_builder.adjust(1, 1, 1)
 
     return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
+
+
+def choice_pay_kb() -> ReplyKeyboardMarkup:
+    kb_builder = ReplyKeyboardBuilder()
+
+    kb_builder.button(text='З балансу')
+    kb_builder.button(text='По передоплаті')
+
+    kb_builder.adjust(1)
+
+    return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True,
+                                input_field_placeholder='Баланс або передоплата')
+
+
+def advance_or_full_kb() -> ReplyKeyboardMarkup:
+    kb_builder = ReplyKeyboardBuilder()
+
+    kb_builder.button(text='Аванс з накладним платежем')
+    kb_builder.button(text='Повна оплата')
+
+    kb_builder.adjust(1)
+
+    return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True,
+                                input_field_placeholder='Аванс або повна оплата')
+
+
+def check_data_order_kb() -> ReplyKeyboardMarkup:
+    kb_builder = ReplyKeyboardBuilder()
+
+    kb_builder.button(text='Підтверджую')
+    kb_builder.button(text='Є помилкові дані')
+
+    kb_builder.adjust(1)
+
+    return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True,
+                                input_field_placeholder='Перевірка даних')
