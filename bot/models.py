@@ -76,7 +76,7 @@ class Shoes(models.Model):
     price_outlet = models.DecimalField(
         max_digits=6,
         decimal_places=2,
-        verbose_name='Ціна РОЗ'
+        verbose_name='Ціна РОЗДРІБ'
     )
     image = models.ImageField(
         upload_to='shoes_images',
