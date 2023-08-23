@@ -14,6 +14,20 @@ class FSMCreateOrder(StatesGroup):
 	CLIENT_NAME = State()
 	CLIENT_PHONE = State()
 	OTHER_DATA = State()
-	POSTPAYMENT = State()
+	CHOICE_PAY = State()
+	CHOSE_PAY = State()
+
 	BALANCE_PAY = State()
-	SCREEN_PAYMENT = State()
+	BALANCE_PAY_ADVANCE = State()
+
+	CHECK_ORDER_BALANCE_ADVANCE = State()
+	CHECK_ORDER_BALANCE = State()
+
+	SCREEN_PAY = State()
+	SCREEN_PAY_ADVANCE = State()
+	SCREEN_PAY_FULL = State()
+
+	CHECK_ORDER_SCREEN_ADVANCE = State()
+	CHECK_ORDER_SCREEN = State()
+
+	FINISH_CREATE_ORDER = State()
