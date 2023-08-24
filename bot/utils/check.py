@@ -13,7 +13,7 @@ def check_client_phone(phone: str) -> bool:
 
 @sync_to_async
 def check_pay_sum(amount: str) -> bool:
-	if len(amount) > 3:
+	if len(amount) >= 3:
 		for item in amount:
 			if not item.isdigit():
 				return False
