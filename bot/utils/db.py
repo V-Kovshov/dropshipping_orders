@@ -51,7 +51,28 @@ class Order:
         return shoes
 
     @sync_to_async
-    def get_balance(self, user_id: int):
+    def get_size(self, size_id: int) -> str:
+        size = SizeQuantity.objects.get(id=size_id)
+        return f'{size.size}({size.centimeters}см)'
+
+    @sync_to_async
+    def check_balance(self, user_id: int) -> int:
         user = UserTG.objects.get(tg_id=user_id)
         user_balance = int(user.balance)
         return user_balance
+
+    @sync_to_async
+    def get_user_name(self, user_id: int) -> str:
+        user = UserTG.objects.get(tg_id=user_id)
+        user_name = str(user.name)
+        return user_name
+
+    # @sync_to_async
+    # def de_balancing(self, user_id, model_id, postapayment, avans) -> None:
+    #     balance_user = UserTG.objects.get(tg_id=user_id).balance
+    #     model_price = Shoes.objects.get(id=model_id)
+
+    @sync_to_async
+    def check_user_balance(self, user_id: int) -> None:
+        pass
+        
