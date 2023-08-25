@@ -246,6 +246,7 @@ async def balance_pay_advance(msg: Message, state: FSMContext) -> None:
 		await state.set_state(FSMCreateOrder.BALANCE_PAY_ADVANCE)
 
 
+# todo: додати docstring
 @router.message(FSMCreateOrder.CHECK_ORDER_BALANCE_ADVANCE)
 async def check_order_balance_advance(msg: Message, state: FSMContext) -> None:
 	if await check.check_pay_sum(msg.text):
@@ -277,7 +278,7 @@ async def check_order_balance_advance(msg: Message, state: FSMContext) -> None:
 				f"▫️<b>Накладний платіж:</b> {postpayment}.00грн\n"
 			await msg.answer(data, reply_markup=reply.check_data_order_kb())
 
-			await state.set_state(FSMCreateOrder.FINISH_CREATE_ORDER)
+			await state.set_state(FSMCreateOrder.FINISH_BALANCE_ADVANCE)
 	else:
 		await msg.answer('Введіть коректну суму накладного платежу згідно прикладу.')
 		await state.set_state(FSMCreateOrder.CHECK_ORDER_BALANCE_ADVANCE)
@@ -415,11 +416,18 @@ async def screen_pay_full(msg: Message, bot: Bot, state: FSMContext) -> None:
 	await state.set_state(FSMCreateOrder.FINISH_CREATE_ORDER)
 
 
+@router.message(FSMCreateOrder.FINISH_BALANCE_ADVANCE)
+async def finish_balance_advance(msg: Message, state: FSMContext) -> None:
+	context_data = await state.get_data()
+	context_data['user_id'] = msg.from_user.id
+	await order.create_new_order(context_data)
+
 
 @router.message(FSMCreateOrder.FINISH_CREATE_ORDER, F.text == 'Підтверджую')
 async def finish_create_order(msg: Message, state: FSMContext) -> None:
 	# TODO: зробити оформлення замовлення в БД
-	await msg.answer('🌹Ваше замовлення оформлено!🌹\n\nТТН буде в посиланні на це замовлення в вашому кабінеті')
+	await msg.answer('🌹Ваше замовлення оформлено!🌹\n\nТТН буде в посиланні на це замовлення в вашому кабінеті',
+					reply_markup=reply.start_keyboard())
 	await state.clear()
 
 
