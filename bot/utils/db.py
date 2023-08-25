@@ -68,25 +68,28 @@ class Order:
         return user_name
 
     @sync_to_async
-    def create_new_order(self, context_data: dict) -> None:
-        # todo: зробити списання балансу
-        print(context_data)
-        # user_id = UserTG.objects.get(id=17)
+    def create_order_from_balance(self, context_data: dict) -> None:
         user_id = UserTG.objects.get(tg_id=context_data.get('user_id'))
         model = Shoes.objects.get(id=context_data.get('model'))
-        size = SizeQuantity.objects.get(id=context_data.get('shoes_size')).size
+        size = SizeQuantity.objects.get(id=context_data.get('shoes_size'))
         client_name = context_data.get('client_name')
         client_phone = context_data.get('client_phone')
         other_data = context_data.get('other_data')
-        balance_advance = context_data.get('balance_advance')
-        postpayment = context_data.get('postpayment')
+        balance_advance = context_data.get('balance_advance') or context_data.get('pay')
+        postpayment = context_data.get('postpayment') or 0
 
         OrderTG.objects.create(user_id=user_id,
                                shoes_model=model,
-                               shoes_size=size,
+                               shoes_size=size.size,
                                client_name=client_name,
                                client_phone=client_phone,
-                               data=other_data,
+                               other_data=other_data,
                                postpayment=postpayment,
                                balance_pay=balance_advance)
-        print('ГОТОВ!!!!!!')
+
+        if size.quantity >= 1:
+            size.quantity -= 1
+            size.save()
+
+        user_id.balance -= int(balance_advance)
+        user_id.save()
