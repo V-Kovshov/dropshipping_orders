@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
-from bot.models import Shoes, SizeQuantity, UserTG, OrderTG
+from bot.models import Shoes, SizeQuantity, UserTG, OrderTG, OrderInstagram
 
 
 class SizeInline(admin.TabularInline):
@@ -38,28 +38,15 @@ class UserTGAdmin(admin.ModelAdmin):
 
 @admin.register(OrderTG)
 class OrderTGAdmin(admin.ModelAdmin):
-	list_display = ('date', 'user_id', 'user_instagram', 'shoes_model', 'balance', 'invoice')
-	fields = ('user_id', 'user_instagram', 'shoes_model', 'shoes_size', 'client_name', 'client_phone', 'data', 'postpayment', 'screen_payment', 'balance', 'invoice')
-	search_fields = ('client_name', 'invoice', 'data')
-	ordering = ('date', )
+	list_display = ('user_id', 'date', 'shoes_model', 'balance', 'invoice', 'issued')
+	fields = ('user_id', 'shoes_model', 'shoes_size', 'client_name', 'client_phone', 'other_data', 'balance_pay', 'postpayment', 'screen_payment', 'balance', 'issued', 'invoice')
+	search_fields = ('client_name', 'invoice', 'other_data', 'user_id__name', 'shoes_model__article')
+	ordering = ('date', 'user_id', 'shoes_model')
 
-	def get_list_display(self, request):
-		list_display = super().get_list_display(request)
-		user_id = list_display.index('user_id')
-		user_instagram = list_display.index('user_instagram')
-		if request.user:
-			list_display = tuple(i for i in list_display if list_display.index(i) != user_id)
-		else:
-			list_display = tuple(i for i in list_display if list_display.index(i) != user_instagram)
-		return list_display
 
-	def get_fields(self, request, obj=None):
-		fields = super().get_fields(request)
-		user_id = fields.index('user_id')
-		user_instagram = fields.index('user_instagram')
-		screen_payment = fields.index('screen_payment')
-		if request.user:
-			fields = tuple(i for i in fields if fields.index(i) not in [user_id, screen_payment])
-		else:
-			fields = tuple(i for i in fields if fields.index(i) != [user_instagram])
-		return fields
+@admin.register(OrderInstagram)
+class OrderInstagramAdmin(admin.ModelAdmin):
+	list_display = ('user_instagram', 'date', 'shoes_model', 'invoice', 'issued')
+	fields = ('user_instagram', 'shoes_model', 'shoes_size', 'client_name', 'client_phone', 'other_data', 'advance', 'postpayment', 'issued', 'invoice')
+	search_fields = ('client_name', 'invoice', 'other_data', 'user_instagram', 'shoes_model__article')
+	ordering = ('date', 'user_instagram', 'shoes_model')
