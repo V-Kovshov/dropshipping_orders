@@ -41,7 +41,7 @@ class OrderTGAdmin(admin.ModelAdmin):
 	list_display = ('user_id', 'date', 'shoes_model', 'balance', 'invoice', 'issued')
 	fields = ('user_id', 'shoes_model', 'shoes_size', 'client_name', 'client_phone', 'other_data', 'balance_pay', 'postpayment', 'screen_payment', 'balance', 'issued', 'invoice')
 	search_fields = ('client_name', 'invoice', 'other_data', 'user_id__name', 'shoes_model__article')
-	ordering = ('date', 'user_id', 'shoes_model')
+	ordering = ('-date', 'user_id', 'shoes_model')
 
 
 @admin.register(OrderInstagram)
