@@ -67,12 +67,26 @@ class Order:
         user_name = str(user.name)
         return user_name
 
-    # @sync_to_async
-    # def de_balancing(self, user_id, model_id, postapayment, avans) -> None:
-    #     balance_user = UserTG.objects.get(tg_id=user_id).balance
-    #     model_price = Shoes.objects.get(id=model_id)
-
     @sync_to_async
-    def check_user_balance(self, user_id: int) -> None:
-        pass
-        
+    def create_new_order(self, context_data: dict) -> None:
+        # todo: зробити списання балансу
+        print(context_data)
+        # user_id = UserTG.objects.get(id=17)
+        user_id = UserTG.objects.get(tg_id=context_data.get('user_id'))
+        model = Shoes.objects.get(id=context_data.get('model'))
+        size = SizeQuantity.objects.get(id=context_data.get('shoes_size')).size
+        client_name = context_data.get('client_name')
+        client_phone = context_data.get('client_phone')
+        other_data = context_data.get('other_data')
+        balance_advance = context_data.get('balance_advance')
+        postpayment = context_data.get('postpayment')
+
+        OrderTG.objects.create(user_id=user_id,
+                               shoes_model=model,
+                               shoes_size=size,
+                               client_name=client_name,
+                               client_phone=client_phone,
+                               data=other_data,
+                               postpayment=postpayment,
+                               balance_pay=balance_advance)
+        print('ГОТОВ!!!!!!')
