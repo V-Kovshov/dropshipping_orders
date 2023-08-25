@@ -31,4 +31,5 @@ class FSMCreateOrder(StatesGroup):
 	CHECK_ORDER_SCREEN = State()
 
 	FINISH_BALANCE_ADVANCE = State()
+	FINISH_BALANCE = State()
 	FINISH_CREATE_ORDER = State()
