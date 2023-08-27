@@ -284,7 +284,7 @@ async def check_order_balance_advance(msg: Message, state: FSMContext) -> None:
 
 
 @router.message(FSMCreateOrder.CHECK_ORDER_BALANCE)
-async def balance_pay_full(msg: Message, state: FSMContext) -> None:
+async def check_order_balance(msg: Message, state: FSMContext) -> None:
 	context_data = await state.get_data()
 
 	if await check.check_pay_sum(msg.text):
@@ -417,7 +417,7 @@ async def screen_pay_full(msg: Message, bot: Bot, state: FSMContext) -> None:
 
 
 @router.message(FSMCreateOrder.FINISH_BALANCE_ADVANCE, F.text == 'Підтверджую')
-async def finish_balance_advance(msg: Message, state: FSMContext) -> None:
+async def finish_balance_advance_accepted(msg: Message, state: FSMContext) -> None:
 	context_data = await state.get_data()
 	context_data['user_id'] = msg.from_user.id
 	await order.create_order_from_balance(context_data)
@@ -429,13 +429,13 @@ async def finish_balance_advance(msg: Message, state: FSMContext) -> None:
 
 
 @router.message(FSMCreateOrder.FINISH_BALANCE_ADVANCE, F.text == 'Відмінити')
-async def finish_create_order(msg: Message, state: FSMContext) -> None:
+async def finish_balance_advance_canceled(msg: Message, state: FSMContext) -> None:
 	await msg.answer('Оформлення замовлення скасовано', reply_markup=reply.start_keyboard())
 	await state.clear()
 
 
 @router.message(FSMCreateOrder.FINISH_BALANCE, F.text == 'Підтверджую')
-async def finish_balance_advance(msg: Message, state: FSMContext) -> None:
+async def finish_balance_accepted(msg: Message, state: FSMContext) -> None:
 	context_data = await state.get_data()
 	context_data['user_id'] = msg.from_user.id
 	await order.create_order_from_balance(context_data)
@@ -447,7 +447,7 @@ async def finish_balance_advance(msg: Message, state: FSMContext) -> None:
 
 
 @router.message(FSMCreateOrder.FINISH_BALANCE, F.text == 'Відмінити')
-async def finish_create_order(msg: Message, state: FSMContext) -> None:
+async def finish_balance_canceled(msg: Message, state: FSMContext) -> None:
 	await msg.answer('Оформлення замовлення скасовано', reply_markup=reply.start_keyboard())
 	await state.clear()
 
