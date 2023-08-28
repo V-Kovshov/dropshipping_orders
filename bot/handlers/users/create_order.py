@@ -322,7 +322,7 @@ async def check_order_balance(msg: Message, state: FSMContext) -> None:
 @router.message(FSMCreateOrder.SCREEN_PAY, F.text.in_({'Аванс з накладним платежем', 'Повна оплата'}))
 async def screen_pay(msg: Message, state: FSMContext) -> None:
 	if msg.text == 'Аванс з накладним платежем':
-		await msg.answer('Напишіть суму авансу та через кому суму накладного платежу:\n\n'
+		await msg.answer('Напишіть суму авансу та накладного платежу, через кому:\n\n'
 						'Наприклад "<b>200,1650</b>"(без будь-яких інших символів)')
 		await state.set_state(FSMCreateOrder.SCREEN_PAY_ADVANCE)
 	elif msg.text == 'Повна оплата':
@@ -362,6 +362,7 @@ async def check_order_screen_advance(msg: Message, bot: Bot, state: FSMContext) 
 	if not os.path.exists(f'bot/media/payment/{user_path}/'):
 		os.mkdir(f'bot/media/payment/{user_path}/')
 	await bot.download(file=photo_id, destination=f'bot/media/payment/{user_path}/{photo_path}')
+	await state.update_data(screen_url=f'/bot/media/payment/{user_path}/{photo_path}')
 	# Перевірка даних замовлення перед оформленням
 	context_data = await state.get_data()
 	model = await order.get_model(context_data.get('model'))
@@ -369,8 +370,7 @@ async def check_order_screen_advance(msg: Message, bot: Bot, state: FSMContext) 
 	client_name = context_data.get('client_name')
 	client_phone = context_data.get('client_phone')
 	other_data = context_data.get('other_data')
-	balance_advance, postpayment = context_data.get('pay').split(',')
-	# postpayment = context_data.get('postpayment')
+	payfull_advance, postpayment = context_data.get('pay').split(',')
 	await msg.answer('Давай перевіримо дані')
 
 	data = f"▫️<b>Модель взуття:</b> {model.article}\n" \
@@ -378,11 +378,11 @@ async def check_order_screen_advance(msg: Message, bot: Bot, state: FSMContext) 
 		f"▫️<b>ПІБ клієнта:</b> {client_name}\n" \
 		f"▫️<b>Телефон клієнта:</b> {client_phone}\n" \
 		f"▫️<b>Інші дані для відправки:</b> {other_data}\n" \
-		f"▫️<b>Аванс:</b> {balance_advance}.00грн\n" \
+		f"▫️<b>Аванс:</b> {payfull_advance}.00грн\n" \
 		f"▫️<b>Накладний платіж:</b> {postpayment}.00грн\n"
 	await msg.answer(data, reply_markup=reply.check_data_order_kb())
 
-	await state.set_state(FSMCreateOrder.FINISH_CREATE_ORDER)
+	await state.set_state(FSMCreateOrder.FINISH_PAYFULL_ADVANCE)
 
 
 @router.message(FSMCreateOrder.SCREEN_PAY_FULL)
@@ -395,6 +395,7 @@ async def screen_pay_full(msg: Message, bot: Bot, state: FSMContext) -> None:
 	if not os.path.exists(f'bot/media/payment/{user_path}/'):
 		os.mkdir(f'bot/media/payment/{user_path}/')
 	await bot.download(file=photo_id, destination=f'bot/media/payment/{user_path}/{photo_path}')
+	await state.update_data(screen_url=f'/bot/media/payment/{user_path}/{photo_path}')
 	# Перевірка даних замовлення перед оформленням
 	context_data = await state.get_data()
 	model = await order.get_model(context_data.get('model'))
@@ -413,7 +414,7 @@ async def screen_pay_full(msg: Message, bot: Bot, state: FSMContext) -> None:
 		f"▫️<b>Аванс:</b> {model.price_opt}\n"
 	await msg.answer(data, reply_markup=reply.check_data_order_kb())
 
-	await state.set_state(FSMCreateOrder.FINISH_CREATE_ORDER)
+	await state.set_state(FSMCreateOrder.FINISH_PAYFULL)
 
 
 @router.message(FSMCreateOrder.FINISH_BALANCE_ADVANCE, F.text == 'Підтверджую')
@@ -452,15 +453,37 @@ async def finish_balance_canceled(msg: Message, state: FSMContext) -> None:
 	await state.clear()
 
 
-@router.message(FSMCreateOrder.FINISH_CREATE_ORDER, F.text == 'Підтверджую')
-async def finish_create_order(msg: Message, state: FSMContext) -> None:
-	# TODO: зробити оформлення замовлення в БД
+@router.message(FSMCreateOrder.FINISH_PAYFULL_ADVANCE, F.text == 'Підтверджую')
+async def finish_payfull_advance_accepted(msg: Message, state: FSMContext) -> None:
+	context_data = await state.get_data()
+	context_data['user_id'] = msg.from_user.id
+	await order.create_order_payfull(context_data)
+	await msg.answer('Створюємо ваше замовлення, декілька секунд...🫶🏼')
+	await sleep(5)
 	await msg.answer('🌹Ваше замовлення оформлено!🌹\n\nТТН буде в посиланні на це замовлення в вашому кабінеті',
 					reply_markup=reply.start_keyboard())
 	await state.clear()
 
 
-@router.message(FSMCreateOrder.FINISH_CREATE_ORDER, F.text == 'Відмінити')
-async def finish_create_order(msg: Message, state: FSMContext) -> None:
+@router.message(FSMCreateOrder.FINISH_PAYFULL_ADVANCE, F.text == 'Відмінити')
+async def finish_payfull_advance_canceled(msg: Message, state: FSMContext) -> None:
+	await msg.answer('Оформлення замовлення скасовано', reply_markup=reply.start_keyboard())
+	await state.clear()
+
+
+@router.message(FSMCreateOrder.FINISH_PAYFULL, F.text == 'Підтверджую')
+async def finish_payfull_advance_accepted(msg: Message, state: FSMContext) -> None:
+	context_data = await state.get_data()
+	context_data['user_id'] = msg.from_user.id
+	await order.create_order_payfull(context_data)
+	await msg.answer('Створюємо ваше замовлення, декілька секунд...🫶🏼')
+	await sleep(5)
+	await msg.answer('🌹Ваше замовлення оформлено!🌹\n\nТТН буде в посиланні на це замовлення в вашому кабінеті',
+					reply_markup=reply.start_keyboard())
+	await state.clear()
+
+
+@router.message(FSMCreateOrder.FINISH_PAYFULL, F.text == 'Відмінити')
+async def finish_payfull_advance_canceled(msg: Message, state: FSMContext) -> None:
 	await msg.answer('Оформлення замовлення скасовано', reply_markup=reply.start_keyboard())
 	await state.clear()
