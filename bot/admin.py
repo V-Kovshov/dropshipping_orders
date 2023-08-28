@@ -39,9 +39,17 @@ class UserTGAdmin(admin.ModelAdmin):
 @admin.register(OrderTG)
 class OrderTGAdmin(admin.ModelAdmin):
 	list_display = ('user_id', 'date', 'shoes_model', 'balance', 'invoice', 'issued')
-	fields = ('user_id', 'shoes_model', 'shoes_size', 'client_name', 'client_phone', 'other_data', 'balance_pay', 'postpayment', 'screen_payment', 'balance', 'issued', 'invoice')
 	search_fields = ('client_name', 'invoice', 'other_data', 'user_id__name', 'shoes_model__article')
+	fields = ('user_id', 'shoes_model', 'shoes_size', 'client_name', 'client_phone', 'other_data', 'get_html_photo', 'balance_pay', 'postpayment', 'balance', 'issued', 'invoice')
+	readonly_fields = ('get_html_photo', 'user_id')
 	ordering = ('-date', 'user_id', 'shoes_model')
+
+	def get_html_photo(self, object):
+		if object.screen_payment:
+			return mark_safe(f"<img src='{object.screen_payment}' width=100>")
+		return 'Немає'
+
+	get_html_photo.short_description = 'Скрін оплати'
 
 
 @admin.register(OrderInstagram)
