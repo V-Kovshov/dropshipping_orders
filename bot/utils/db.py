@@ -77,6 +77,7 @@ class Order:
         other_data = context_data.get('other_data')
         balance_advance = context_data.get('balance_advance') or context_data.get('pay')
         postpayment = context_data.get('postpayment') or 0
+        balance = (int(balance_advance) + int(postpayment)) - model.price_opt
 
         OrderTG.objects.create(user_id=user_id,
                                shoes_model=model,
@@ -85,7 +86,8 @@ class Order:
                                client_phone=client_phone,
                                other_data=other_data,
                                postpayment=postpayment,
-                               balance_pay=balance_advance)
+                               balance_pay=balance_advance,
+                               balance=balance)
 
         if size.quantity >= 1:
             size.quantity -= 1
@@ -93,3 +95,42 @@ class Order:
 
         user_id.balance -= int(balance_advance)
         user_id.save()
+
+    @sync_to_async
+    def create_order_payfull(self, context_data: dict) -> None:
+        user_id = UserTG.objects.get(tg_id=context_data.get('user_id'))
+        model = Shoes.objects.get(id=context_data.get('model'))
+        size = SizeQuantity.objects.get(id=context_data.get('shoes_size'))
+        client_name = context_data.get('client_name')
+        client_phone = context_data.get('client_phone')
+        other_data = context_data.get('other_data')
+        screen = context_data.get('screen_url')
+        if not context_data.get('pay'):
+            payfull_advance, postpayment = 0, 0
+        else:
+            payfull_advance, postpayment = context_data.get('pay').split(',')
+        balance = (int(payfull_advance) + int(postpayment)) - model.price_opt
+
+        if payfull_advance:
+            OrderTG.objects.create(user_id=user_id,
+                                   shoes_model=model,
+                                   shoes_size=size.size,
+                                   client_name=client_name,
+                                   client_phone=client_phone,
+                                   other_data=other_data,
+                                   screen_payment=screen,
+                                   postpayment=postpayment,
+                                   balance=balance)
+        else:
+            OrderTG.objects.create(user_id=user_id,
+                                   shoes_model=model,
+                                   shoes_size=size.size,
+                                   client_name=client_name,
+                                   client_phone=client_phone,
+                                   other_data=other_data,
+                                   screen_payment=screen)
+
+        if size.quantity >= 1:
+            size.quantity -= 1
+            size.save()
+
