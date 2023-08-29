@@ -66,3 +66,13 @@ def check_data_order_kb() -> ReplyKeyboardMarkup:
 
     return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True,
                                 input_field_placeholder='Перевірка даних')
+
+
+def cancel_order() -> ReplyKeyboardMarkup:
+    kb_builder = ReplyKeyboardBuilder()
+
+    kb_builder.button(text='Відмінити замовлення')
+
+    kb_builder.adjust(1)
+
+    return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
