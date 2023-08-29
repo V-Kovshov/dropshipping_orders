@@ -251,9 +251,15 @@ async def balance_pay_advance(msg: Message, state: FSMContext) -> None:
 		await state.set_state(FSMCreateOrder.BALANCE_PAY_ADVANCE)
 
 
-# todo: додати docstring
 @router.message(FSMCreateOrder.CHECK_ORDER_BALANCE_ADVANCE)
 async def check_order_balance_advance(msg: Message, state: FSMContext) -> None:
+	"""
+	Хендлер зберігає суму накладного платежу та відсилає юзеру дані замовлення для перевірки.
+
+	:param msg: Message
+	:param state: FSMContext
+	:return: None
+	"""
 	if await check.check_pay_sum(msg.text):
 		await state.update_data(postpayment=msg.text)
 
@@ -285,6 +291,13 @@ async def check_order_balance_advance(msg: Message, state: FSMContext) -> None:
 
 @router.message(FSMCreateOrder.CHECK_ORDER_BALANCE)
 async def check_order_balance(msg: Message, state: FSMContext) -> None:
+	"""
+	Хендлер перевіряє коректність даних. Після чого зберігає дані та відправляє юзеру на перевірку.
+
+	:param msg: Message
+	:param state: FSMContext
+	:return: None
+	"""
 	context_data = await state.get_data()
 
 	if await check.check_pay_sum(msg.text):
@@ -294,7 +307,6 @@ async def check_order_balance(msg: Message, state: FSMContext) -> None:
 							reply_markup=reply.choice_pay_kb())
 			await state.set_state(FSMCreateOrder.CHOSE_PAY)
 		else:
-			# await state.update_data(pay=msg.text)
 			context_data['pay'] = msg.text
 			model = await order.get_model(context_data.get('model'))
 			size = await order.get_size(context_data.get('shoes_size'))
@@ -321,6 +333,13 @@ async def check_order_balance(msg: Message, state: FSMContext) -> None:
 
 @router.message(FSMCreateOrder.SCREEN_PAY, F.text.in_({'Аванс з накладним платежем', 'Повна оплата'}))
 async def screen_pay(msg: Message, state: FSMContext) -> None:
+	"""
+	Хендлер для вибору типу оплати з передоплати (повна або накладний платіж).
+
+	:param msg: Message
+	:param state: FSMContext
+	:return: None
+	"""
 	if msg.text == 'Аванс з накладним платежем':
 		await msg.answer('Напишіть суму авансу та накладного платежу, через кому:\n\n'
 						'Наприклад "<b>200,1650</b>"(без будь-яких інших символів)')
@@ -346,6 +365,13 @@ async def balance_pay_wrong(msg: Message, state: FSMContext) -> None:
 
 @router.message(FSMCreateOrder.SCREEN_PAY_ADVANCE)
 async def screen_pay_advance(msg: Message, state: FSMContext) -> None:
+	"""
+	Хендлер отримує суму оплати та запитує скрін від юзера.
+
+	:param msg: Message
+	:param state: FSMContext
+	:return: None
+	"""
 	await state.update_data(pay=msg.text)
 	await msg.answer('Надішліть скрін з оплатою:\n\n'
 					"Обов'язково в коментарях до оплати напишіть прізвище клієнта.")
@@ -354,6 +380,14 @@ async def screen_pay_advance(msg: Message, state: FSMContext) -> None:
 
 @router.message(FSMCreateOrder.CHECK_ORDER_SCREEN_ADVANCE)
 async def check_order_screen_advance(msg: Message, bot: Bot, state: FSMContext) -> None:
+	"""
+	Хендлер зберігає скрін оплати та надсилає дані юзеру для перевірки.
+
+	:param msg: Message
+	:param bot: Bot
+	:param state: FSMContext
+	:return: None
+	"""
 	# Зберігаємо скрін з оплатою від клієнта в теку під його ім'ям
 	user_path = await order.get_user_name(msg.from_user.id)
 	photo_id = msg.photo[-1].file_id
@@ -387,6 +421,14 @@ async def check_order_screen_advance(msg: Message, bot: Bot, state: FSMContext) 
 
 @router.message(FSMCreateOrder.SCREEN_PAY_FULL)
 async def screen_pay_full(msg: Message, bot: Bot, state: FSMContext) -> None:
+	"""
+	Хендлер зберігає скрін оплати та надсилає дані юзеру для перевірки.
+
+	:param msg: Message
+	:param bot: Bot
+	:param state: FSMContext
+	:return: None
+	"""
 	# Зберігаємо скрін з оплатою від клієнта в теку під його ім'ям
 	user_path = await order.get_user_name(msg.from_user.id)
 	photo_id = msg.photo[-1].file_id
@@ -419,6 +461,13 @@ async def screen_pay_full(msg: Message, bot: Bot, state: FSMContext) -> None:
 
 @router.message(FSMCreateOrder.FINISH_BALANCE_ADVANCE, F.text == 'Підтверджую')
 async def finish_balance_advance_accepted(msg: Message, state: FSMContext) -> None:
+	"""
+	Хендлер для створення замовлення в БД, після чого стирає дані з FSM.
+
+	:param msg: Message
+	:param state: FSMContext
+	:return: None
+	"""
 	context_data = await state.get_data()
 	context_data['user_id'] = msg.from_user.id
 	await order.create_order_from_balance(context_data)
@@ -431,12 +480,26 @@ async def finish_balance_advance_accepted(msg: Message, state: FSMContext) -> No
 
 @router.message(FSMCreateOrder.FINISH_BALANCE_ADVANCE, F.text == 'Відмінити')
 async def finish_balance_advance_canceled(msg: Message, state: FSMContext) -> None:
+	"""
+	Хендлер відміняє оформлення замовлення після чого повертаю юзера на початковий екран.
+
+	:param msg: Message
+	:param state: FSMContext
+	:return: None
+	"""
 	await msg.answer('Оформлення замовлення скасовано', reply_markup=reply.start_keyboard())
 	await state.clear()
 
 
 @router.message(FSMCreateOrder.FINISH_BALANCE, F.text == 'Підтверджую')
 async def finish_balance_accepted(msg: Message, state: FSMContext) -> None:
+	"""
+	Хендлер для створення замовлення в БД, після чого стирає дані з FSM.
+
+	:param msg: Message
+	:param state: FSMContext
+	:return: None
+	"""
 	context_data = await state.get_data()
 	context_data['user_id'] = msg.from_user.id
 	await order.create_order_from_balance(context_data)
@@ -449,12 +512,26 @@ async def finish_balance_accepted(msg: Message, state: FSMContext) -> None:
 
 @router.message(FSMCreateOrder.FINISH_BALANCE, F.text == 'Відмінити')
 async def finish_balance_canceled(msg: Message, state: FSMContext) -> None:
+	"""
+	Хендлер відміняє оформлення замовлення після чого повертаю юзера на початковий екран.
+
+	:param msg: Message
+	:param state: FSMContext
+	:return: None
+	"""
 	await msg.answer('Оформлення замовлення скасовано', reply_markup=reply.start_keyboard())
 	await state.clear()
 
 
 @router.message(FSMCreateOrder.FINISH_PAYFULL_ADVANCE, F.text == 'Підтверджую')
 async def finish_payfull_advance_accepted(msg: Message, state: FSMContext) -> None:
+	"""
+	Хендлер для створення замовлення в БД, після чого стирає дані з FSM.
+
+	:param msg: Message
+	:param state: FSMContext
+	:return: None
+	"""
 	context_data = await state.get_data()
 	context_data['user_id'] = msg.from_user.id
 	await order.create_order_payfull(context_data)
@@ -467,12 +544,26 @@ async def finish_payfull_advance_accepted(msg: Message, state: FSMContext) -> No
 
 @router.message(FSMCreateOrder.FINISH_PAYFULL_ADVANCE, F.text == 'Відмінити')
 async def finish_payfull_advance_canceled(msg: Message, state: FSMContext) -> None:
+	"""
+	Хендлер відміняє оформлення замовлення після чого повертаю юзера на початковий екран.
+
+	:param msg: Message
+	:param state: FSMContext
+	:return: None
+	"""
 	await msg.answer('Оформлення замовлення скасовано', reply_markup=reply.start_keyboard())
 	await state.clear()
 
 
 @router.message(FSMCreateOrder.FINISH_PAYFULL, F.text == 'Підтверджую')
 async def finish_payfull_advance_accepted(msg: Message, state: FSMContext) -> None:
+	"""
+	Хендлер для створення замовлення в БД, після чого стирає дані з FSM.
+
+	:param msg: Message
+	:param state: FSMContext
+	:return: None
+	"""
 	context_data = await state.get_data()
 	context_data['user_id'] = msg.from_user.id
 	await order.create_order_payfull(context_data)
@@ -485,5 +576,12 @@ async def finish_payfull_advance_accepted(msg: Message, state: FSMContext) -> No
 
 @router.message(FSMCreateOrder.FINISH_PAYFULL, F.text == 'Відмінити')
 async def finish_payfull_advance_canceled(msg: Message, state: FSMContext) -> None:
+	"""
+	Хендлер відміняє оформлення замовлення після чого повертаю юзера на початковий екран.
+
+	:param msg: Message
+	:param state: FSMContext
+	:return: None
+	"""
 	await msg.answer('Оформлення замовлення скасовано', reply_markup=reply.start_keyboard())
 	await state.clear()
