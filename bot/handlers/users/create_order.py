@@ -378,7 +378,7 @@ async def screen_pay_advance(msg: Message, state: FSMContext) -> None:
 	await state.set_state(FSMCreateOrder.CHECK_ORDER_SCREEN_ADVANCE)
 
 
-@router.message(FSMCreateOrder.CHECK_ORDER_SCREEN_ADVANCE)
+@router.message(lambda m: m.photo,  FSMCreateOrder.CHECK_ORDER_SCREEN_ADVANCE)
 async def check_order_screen_advance(msg: Message, bot: Bot, state: FSMContext) -> None:
 	"""
 	Хендлер зберігає скрін оплати та надсилає дані юзеру для перевірки.
@@ -419,7 +419,13 @@ async def check_order_screen_advance(msg: Message, bot: Bot, state: FSMContext) 
 	await state.set_state(FSMCreateOrder.FINISH_PAYFULL_ADVANCE)
 
 
-@router.message(FSMCreateOrder.SCREEN_PAY_FULL)
+@router.message(FSMCreateOrder.CHECK_ORDER_SCREEN_ADVANCE)
+async def check_order_screen_advance_wrong(msg: Message, state: FSMContext) -> None:
+	await msg.answer('Потрібно надіслати скрін з оплатою.')
+	await state.set_state(FSMCreateOrder.CHECK_ORDER_SCREEN_ADVANCE)
+
+
+@router.message(FSMCreateOrder.SCREEN_PAY_FULL, lambda m: m.photo)
 async def screen_pay_full(msg: Message, bot: Bot, state: FSMContext) -> None:
 	"""
 	Хендлер зберігає скрін оплати та надсилає дані юзеру для перевірки.
@@ -457,6 +463,12 @@ async def screen_pay_full(msg: Message, bot: Bot, state: FSMContext) -> None:
 	await msg.answer(data, reply_markup=reply.check_data_order_kb())
 
 	await state.set_state(FSMCreateOrder.FINISH_PAYFULL)
+
+
+@router.message(FSMCreateOrder.SCREEN_PAY_FULL)
+async def screen_pay_full_wrong(msg: Message, state: FSMContext) -> None:
+	await msg.answer('Потрібно надіслати скрін з оплатою.')
+	await state.set_state(FSMCreateOrder.SCREEN_PAY_FULL)
 
 
 @router.message(FSMCreateOrder.FINISH_BALANCE_ADVANCE, F.text == 'Підтверджую')
@@ -585,3 +597,10 @@ async def finish_payfull_advance_canceled(msg: Message, state: FSMContext) -> No
 	"""
 	await msg.answer('Оформлення замовлення скасовано', reply_markup=reply.start_keyboard())
 	await state.clear()
+
+
+# @router.message(F.contains('⛔Відмінити замовлення'))
+# @router.message(F.text == 'Відмінити замовлення')
+# async def canceled_order(msg: Message, state: FSMContext) -> None:
+# 	await msg.answer('⛔️Ви відмінили оформлення замовлення.', reply_markup=reply.start_keyboard())
+# 	await state.clear()
