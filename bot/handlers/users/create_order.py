@@ -204,7 +204,7 @@ async def balance_pay(msg: Message, state: FSMContext) -> None:
 	if msg.text == 'Аванс з накладним платежем':
 		await msg.answer(f'✅Доступний баланс: {available_balance},00грн\n'
 						f'🏷Дроп ціна: {shoes.price_opt}\n\n'
-						'Введіть суму авансу:\n(Наприклад "200")')
+						'Введіть суму авансу:\n(Мінімальний аванс 200грн)')
 		await state.set_state(FSMCreateOrder.BALANCE_PAY_ADVANCE)
 
 	elif msg.text == 'Повна оплата':
