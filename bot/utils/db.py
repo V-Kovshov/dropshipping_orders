@@ -1,6 +1,10 @@
 from asgiref.sync import sync_to_async
+from django.db.models import Q
+
 from bot.models import *
 import logging
+
+from bot.utils.nova_post_api import get_status_parcel
 
 logging.basicConfig(level=logging.INFO,
                     format='%(filename)s -> [LINE:%(lineno)d] -> %(levelname)-8s [%(asctime)s] -> %(message)s',
@@ -29,6 +33,21 @@ def registration_user(context_data) -> None:
     balance = context_data.get('balance')
 
     UserTG.objects.create(tg_id=tg_id, name=name, username=username, phone=phone, bank_card=bank_card, balance=balance)
+
+
+@sync_to_async
+def get_all_balance(user_id):
+    balance = 0
+    user = UserTG.objects.get(tg_id=user_id)
+    orders = OrderTG.objects.filter(Q(user_id__tg_id=user_id) & Q(invoice__regex=r'\d{14}'))
+    for order in orders:
+        status = get_status_parcel(order.invoice)
+        if status == 'Відправлення отримано' and order.balance is not None:
+            balance += order.balance
+    user.balance += balance
+    user.save()
+
+    return int(user.balance)
 
 
 class Order:
@@ -133,4 +152,3 @@ class Order:
         if size.quantity >= 1:
             size.quantity -= 1
             size.save()
-
