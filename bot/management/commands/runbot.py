@@ -4,7 +4,7 @@ import asyncio
 from aiogram import Bot, Dispatcher
 from aiogram.fsm.storage.redis import RedisStorage
 
-from bot.handlers.users import start, registration, create_order
+from bot.handlers.users import start, registration, create_order, personal_cabinet
 from bot.config import settings
 from bot.utils.commands import set_commands
 
@@ -27,6 +27,7 @@ async def run():
 	dp.shutdown.register(end_bot)
 
 	dp.include_router(start.router)
+	dp.include_router(personal_cabinet.router)
 	dp.include_router(create_order.router)
 	dp.include_router(registration.router)
 
