@@ -43,6 +43,7 @@ class OrderTG(models.Model):
     balance = models.FloatField(verbose_name='Баланс с замовлення', default=0.0)
     invoice = models.CharField(max_length=14, verbose_name='ТТН', null=True, blank=True)
     issued = models.BooleanField(verbose_name='Замовлення видане', default=False)
+    completed_order = models.BooleanField(verbose_name='Замовлення завершене', default=False)
 
     def __str__(self):
         return f"Замовлення від {self.user_id}"
