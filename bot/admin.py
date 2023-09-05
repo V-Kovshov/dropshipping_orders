@@ -38,11 +38,12 @@ class UserTGAdmin(admin.ModelAdmin):
 
 @admin.register(OrderTG)
 class OrderTGAdmin(admin.ModelAdmin):
-	list_display = ('user_id', 'date', 'shoes_model', 'balance', 'invoice', 'issued')
+	list_display = ('user_id', 'date', 'shoes_model', 'balance', 'invoice', 'issued', 'completed_order')
 	search_fields = ('client_name', 'invoice', 'other_data', 'user_id__name', 'shoes_model__article')
-	fields = ('user_id', 'shoes_model', 'shoes_size', 'client_name', 'client_phone', 'other_data', 'get_html_photo', 'balance_pay', 'postpayment', 'balance', 'issued', 'invoice')
+	fields = ('user_id', 'shoes_model', 'shoes_size', 'client_name', 'client_phone', 'other_data', 'get_html_photo',
+			'balance_pay', 'postpayment', 'balance', 'issued', 'invoice', 'completed_order')
 	readonly_fields = ('get_html_photo', 'user_id')
-	ordering = ('-date', 'user_id', 'shoes_model')
+	ordering = ('-date', 'user_id', 'shoes_model', 'completed_order')
 
 	def get_html_photo(self, object):
 		if object.screen_payment:
@@ -55,6 +56,7 @@ class OrderTGAdmin(admin.ModelAdmin):
 @admin.register(OrderInstagram)
 class OrderInstagramAdmin(admin.ModelAdmin):
 	list_display = ('user_instagram', 'date', 'shoes_model', 'invoice', 'issued')
-	fields = ('user_instagram', 'shoes_model', 'shoes_size', 'client_name', 'client_phone', 'other_data', 'advance', 'postpayment', 'issued', 'invoice')
+	fields = ('user_instagram', 'shoes_model', 'shoes_size', 'client_name', 'client_phone', 'other_data', 'advance',
+			'postpayment', 'issued', 'invoice')
 	search_fields = ('client_name', 'invoice', 'other_data', 'user_instagram', 'shoes_model__article')
 	ordering = ('date', 'user_instagram', 'shoes_model')
