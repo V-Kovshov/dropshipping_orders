@@ -8,7 +8,7 @@ from aiogram.fsm.context import FSMContext
 
 from bot.keyboards.base import reply
 from bot.keyboards.inline.order_kb import get_inline_shoes, get_inline_size
-from bot.utils.db import check_user_in_db, Order
+from bot.utils.db import check_user_in_db, Order, get_all_balance
 from bot.utils.statesform import FSMCreateOrder
 from bot.utils import check
 
@@ -199,7 +199,7 @@ async def balance_pay(msg: Message, state: FSMContext) -> None:
 	:return: none
 	"""
 	context_data = await state.get_data()
-	available_balance = await order.check_balance(msg.from_user.id)
+	available_balance = await get_all_balance(msg.from_user.id)
 	shoes = await order.get_model(context_data.get('model'))
 	if msg.text == 'Аванс з накладним платежем':
 		await msg.answer(f'✅Доступний баланс: {available_balance},00грн\n'
@@ -237,7 +237,7 @@ async def balance_pay_advance(msg: Message, state: FSMContext) -> None:
 	:return: none
 	"""
 	if await check.check_pay_sum(msg.text):
-		if await order.check_balance(msg.from_user.id) < int(msg.text):
+		if await get_all_balance(msg.from_user.id) < int(msg.text):
 			await msg.answer(f'⛔️Не вистачає коштів на балансі.\n\n'
 							'Оберіть тип оплати (з балансу або передоплата):',
 							reply_markup=reply.choice_pay_kb())
