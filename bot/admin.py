@@ -38,7 +38,7 @@ class UserTGAdmin(admin.ModelAdmin):
 
 @admin.register(OrderTG)
 class OrderTGAdmin(admin.ModelAdmin):
-	list_display = ('user_id', 'date', 'shoes_model', 'balance', 'invoice', 'issued', 'completed_order')
+	list_display = ('user_id', 'date', 'shoes_model', 'balance', 'issued', 'invoice', 'completed_order')
 	search_fields = ('client_name', 'invoice', 'other_data', 'user_id__name', 'shoes_model__article')
 	fields = ('user_id', 'shoes_model', 'shoes_size', 'client_name', 'client_phone', 'other_data', 'get_html_photo',
 			'balance_pay', 'postpayment', 'balance', 'issued', 'invoice', 'completed_order')
