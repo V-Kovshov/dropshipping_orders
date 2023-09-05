@@ -36,18 +36,38 @@ def registration_user(context_data) -> None:
 
 
 @sync_to_async
-def get_all_balance(user_id):
+def get_all_balance(user_id) -> int:
     balance = 0
     user = UserTG.objects.get(tg_id=user_id)
-    orders = OrderTG.objects.filter(Q(user_id__tg_id=user_id) & Q(invoice__regex=r'\d{14}'))
+    # fixme: решить как отмечать заказы с уже обработанными балансами (в админке - "Забран")
+    orders = OrderTG.objects.filter(Q(user_id__tg_id=user_id) & Q(invoice__regex=r'\d{14}') & Q(completed_order=False))
     for order in orders:
         status = get_status_parcel(order.invoice)
-        if status == 'Відправлення отримано' and order.balance is not None:
+        if status == 'Відправлення отримано':
             balance += order.balance
+            order.completed_order = True
+            order.save()
     user.balance += balance
     user.save()
 
     return int(user.balance)
+
+
+def write_off_balance(user_id, summ) -> None:
+    orders = OrderTG.objects.filter(Q(user_id=user_id) & Q(completed_order=True) &
+                                    Q(balance__gt=0)).order_by('balance')
+    flag, total = True, int(summ)
+    while flag:
+        for order in orders:
+            if total < order.balance:
+                order.balance -= total
+                order.save()
+                flag = False
+            else:
+                balance = order.balance
+                order.balance -= total - (total - order.balance)
+                total -= balance
+                order.save()
 
 
 class Order:
@@ -112,8 +132,9 @@ class Order:
             size.quantity -= 1
             size.save()
 
-        user_id.balance -= int(balance_advance)
-        user_id.save()
+        # user_id.balance -= int(balance_advance)
+        # user_id.save()
+        write_off_balance(user_id, balance_advance)
 
     @sync_to_async
     def create_order_payfull(self, context_data: dict) -> None:
@@ -152,3 +173,7 @@ class Order:
         if size.quantity >= 1:
             size.quantity -= 1
             size.save()
+
+    # @sync_to_async
+
+
