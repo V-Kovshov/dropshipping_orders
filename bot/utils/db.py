@@ -6,11 +6,6 @@ import logging
 
 from bot.utils.nova_post_api import get_status_parcel
 
-logging.basicConfig(level=logging.INFO,
-                    format='%(filename)s -> [LINE:%(lineno)d] -> %(levelname)-8s [%(asctime)s] -> %(message)s',
-                    filename='bot/logging.log',
-                    filemode='w')
-
 
 @sync_to_async
 def check_user_in_db(user_id) -> bool:
@@ -35,17 +30,22 @@ def registration_user(context_data) -> None:
     UserTG.objects.create(tg_id=tg_id, name=name, username=username, phone=phone, bank_card=bank_card, balance=balance)
 
 
+# TODO: Решить когда будет делаться перерасчёт баланса
 @sync_to_async
-def get_all_balance(user_id) -> int:
+def check_orders_balance(user_id) -> int:
     balance = 0
     user = UserTG.objects.get(tg_id=user_id)
-    # fixme: решить как отмечать заказы с уже обработанными балансами (в админке - "Забран")
-    orders = OrderTG.objects.filter(Q(user_id__tg_id=user_id) & Q(invoice__regex=r'\d{14}') & Q(completed_order=False))
+    orders = OrderTG.objects.filter(Q(user_id__tg_id=user_id),
+                                    Q(invoice__regex=r'\d{14}'),
+                                    Q(completed_order=False))
+    # Отобрали заказы по ид юзера/с указанной ТТН/с отметкой "не забран" и, проходимся циклом по этим заказам
     for order in orders:
         status = get_status_parcel(order.invoice)
+        # Получаем статус посылки через API Новой почты
         if status == 'Відправлення отримано':
             balance += order.balance
             order.completed_order = True
+            order.balance_sheet = True
             order.save()
     user.balance += balance
     user.save()
