@@ -76,3 +76,16 @@ def cancel_order() -> ReplyKeyboardMarkup:
     kb_builder.adjust(1)
 
     return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
+
+
+def kb_profile() -> ReplyKeyboardMarkup:
+    kb_builder = ReplyKeyboardBuilder()
+
+    kb_builder.button(text='Мій баланс')
+    kb_builder.button(text='Мої замовлення')
+    kb_builder.button(text='Пошук замовлення')
+    kb_builder.button(text='Допомога')
+
+    kb_builder.adjust(1)
+
+    return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
