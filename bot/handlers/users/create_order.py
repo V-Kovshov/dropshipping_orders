@@ -8,13 +8,13 @@ from aiogram.fsm.context import FSMContext
 
 from bot.keyboards.base import reply
 from bot.keyboards.inline.order_kb import get_inline_shoes, get_inline_size
-from bot.utils.db import check_user_in_db, Order, check_orders_balance
+from bot.utils.db import check_user_in_db, CreateOrder, check_orders_balance
 from bot.utils.statesform import FSMCreateOrder
 from bot.utils import check
 
 
 router = Router()
-order = Order()
+order = CreateOrder()
 
 
 @router.message(F.text == '🛒Оформити замовлення')
