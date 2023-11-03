@@ -29,3 +29,7 @@ class FSMCreateOrder(StatesGroup):
 	FINISH_BALANCE = State()
 	FINISH_PAYFULL_ADVANCE = State()
 	FINISH_PAYFULL = State()
+
+
+class FSMSearchOrder(StatesGroup):
+	SURNAME_CLIENT = State()
