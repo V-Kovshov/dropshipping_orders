@@ -53,6 +53,7 @@ def check_orders_balance(user_id) -> int:
     return int(user.balance)
 
 
+# TODO: переделать списание с баланса т.к. мы уже списываем с общего баланса, а не с отдельного заказа
 def write_off_balance(user_id, summ) -> None:
     orders = OrderTG.objects.filter(Q(user_id=user_id) & Q(completed_order=True) &
                                     Q(balance__gt=0)).order_by('balance')
@@ -70,7 +71,24 @@ def write_off_balance(user_id, summ) -> None:
                 order.save()
 
 
-class Order:
+@sync_to_async
+def get_users_orders(user_id) -> OrderTG | list:
+    orders = OrderTG.objects.filter(user_id__tg_id=user_id).order_by('date')
+    orders_lst = [i for i in orders]
+    return orders_lst
+
+
+@sync_to_async
+def get_orders_by_client_surname(user_id, surname) -> list:
+    orders = OrderTG.objects.filter(
+        user_id__tg_id=user_id,
+        client_name__icontains=surname
+    )
+    orders_lst = [i for i in orders]
+    return orders_lst
+
+
+class CreateOrder:
     @sync_to_async
     def get_model_sizes(self, model_id: int) -> list:
         sizes = SizeQuantity.objects.filter(shoes=model_id)
