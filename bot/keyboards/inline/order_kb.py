@@ -2,9 +2,9 @@ from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from asgiref.sync import async_to_sync
 
-from bot.utils.db import Order
+from bot.utils.db import CreateOrder
 
-order = Order()
+order = CreateOrder()
 
 
 def get_inline_shoes(*args) -> InlineKeyboardMarkup:
