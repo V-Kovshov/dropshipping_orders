@@ -4,9 +4,9 @@ from aiogram.utils.keyboard import ReplyKeyboardBuilder, ReplyKeyboardMarkup
 def start_keyboard() -> ReplyKeyboardMarkup:
     kb_builder = ReplyKeyboardBuilder()
 
-    kb_builder.button(text='👤Кабінет')
-    kb_builder.button(text='🛒Оформити замовлення')
-    kb_builder.button(text='🤝Підтримка')
+    kb_builder.button(text='Кабінет🏛')
+    kb_builder.button(text='Оформити замовлення🛒')
+    kb_builder.button(text='Підтримка🤝')
     kb_builder.adjust(1, 2)
 
     return kb_builder.as_markup(resize_keyboard=True, input_field_placeholder='Оберіть один із варіантів', one_time_keyboard=True)
@@ -78,13 +78,23 @@ def cancel_order() -> ReplyKeyboardMarkup:
     return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
 
 
-def kb_profile() -> ReplyKeyboardMarkup:
+def profile_kb() -> ReplyKeyboardMarkup:
     kb_builder = ReplyKeyboardBuilder()
 
-    kb_builder.button(text='Мій баланс')
-    kb_builder.button(text='Мої замовлення')
-    kb_builder.button(text='Пошук замовлення')
-    kb_builder.button(text='Допомога')
+    kb_builder.button(text='Мій баланс💰')
+    kb_builder.button(text='Мої замовлення🛍')
+    kb_builder.button(text='Пошук замовлення🔍')
+    kb_builder.button(text='Допомога⚙️')
+
+    kb_builder.adjust(2)
+
+    return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
+
+
+def back_to_profile_kb() -> ReplyKeyboardMarkup:
+    kb_builder = ReplyKeyboardBuilder()
+
+    kb_builder.button(text='Назад в кабінет🏛')
 
     kb_builder.adjust(1)
 
