@@ -31,5 +31,5 @@ class FSMCreateOrder(StatesGroup):
 	FINISH_PAYFULL = State()
 
 
-class FSMSearchOrder(StatesGroup):
+class FSMSearchOrderFromProfile(StatesGroup):
 	SURNAME_CLIENT = State()
