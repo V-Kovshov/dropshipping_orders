@@ -193,5 +193,3 @@ class CreateOrder:
             size.save()
 
     # @sync_to_async
-
-
