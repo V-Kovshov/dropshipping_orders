@@ -12,13 +12,13 @@ router = Router()
 
 @router.message(Command(commands='registration'))
 async def start_registration(msg: Message, state: FSMContext) -> None:
-    await msg.answer(f"{msg.from_user.first_name}, введіть ваше ім'я: ")
+    await msg.answer(f"<b>{msg.from_user.first_name}</b>, введіть ваше ім'я: ")
     await state.set_state(FSMRegisterForm.GET_NAME)
 
 
 @router.message(FSMRegisterForm.GET_NAME)
 async def get_name(msg: Message, state: FSMContext) -> None:
-    await msg.answer(f"Ваше ім'я: {msg.text}✅\n\n" \
+    await msg.answer(f"<b>Ваше ім'я</b>: {msg.text}✅\n\n"\
                      "Далі введіть свій номер телефону або натисніть кнопку нижче⬇️:",
                      reply_markup=reply.get_phone_keyboard())
     await state.update_data(name=msg.text)
@@ -42,7 +42,7 @@ async def get_phone(msg: Message, state: FSMContext) -> None:
 
 @router.message(FSMRegisterForm.GET_CARD)
 async def get_card(msg: Message, state: FSMContext) -> None:
-    await msg.answer(f"Ваша картка:\n {msg.text}✅")
+    await msg.answer(f"<b>Ваша картка</b>:\n {msg.text}✅")
     await state.update_data(bank_card=msg.text)
     context_data = await state.get_data()
     name = context_data.get('name')
