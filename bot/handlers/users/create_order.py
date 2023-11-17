@@ -34,7 +34,7 @@ async def place_order(msg: Message, state: FSMContext) -> None:
 	else:
 		user_msg = '🤔Для початку давай зареєструємо твій обліковий запис.\n\n' \
 				'Щоб почати реєстрацію - натисніть\n<u><b>/registration</b></u>'
-		await msg.answer(user_msg)
+		await msg.answer(user_msg, reply_markup=reply.start_keyboard())
 
 
 @router.message(FSMCreateOrder.CHOOSE_MODEL)
