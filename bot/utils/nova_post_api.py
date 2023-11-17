@@ -1,6 +1,7 @@
 import requests
+from bot.config import settings
 
-api_key = '19608388e2583ed03a660f65179eb1c3'
+api_key = settings.post.api
 url = 'https://api.novaposhta.ua/v2.0/json/'
 
 
@@ -13,7 +14,7 @@ def get_status_parcel(parcel_number):
 			"Documents": [
 				{
 					"DocumentNumber": f"{parcel_number}",
-					"Phone": "380931207723"
+					"Phone": settings.post.phone
 				}
 			]
 		}
