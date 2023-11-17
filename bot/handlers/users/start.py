@@ -21,7 +21,7 @@ async def get_start(msg: types.Message, bot: Bot) -> None:
         reply_markup=reply.start_keyboard())
 
 
-@router.message(F.text == '🤝Підтримка')
+@router.message(F.text == 'Підтримка🤝')
 async def get_support(msg: types.Message, bot: Bot) -> None:
     data = "🔺<b>Реквізити</b>🔺\n"\
         "<b>Установа банку:</b> ПриватБанк\n\n" \
@@ -33,4 +33,4 @@ async def get_support(msg: types.Message, bot: Bot) -> None:
         "<b>РНУКПН одержувача:</b>\n3260704780\n\n" \
         "<b>Призначення платежу:</b>\nОплата за товар і ПРІЗВИЩЕ КЛІЄНТА\n\n" \
         "💌<b>Зв'язатися з менеджером:</b>\n@roza_shoes_drop"
-    await msg.answer(data)
+    await msg.answer(data, reply_markup=reply.start_keyboard())
