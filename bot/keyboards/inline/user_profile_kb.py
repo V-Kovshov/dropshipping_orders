@@ -40,4 +40,3 @@ def found_orders_kb(*args) -> InlineKeyboardMarkup:
 	kb.adjust(1)
 
 	return kb.as_markup()
-
