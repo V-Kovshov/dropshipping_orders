@@ -477,11 +477,16 @@ async def finish_balance_advance_accepted(msg: Message, state: FSMContext) -> No
 	"""
 	context_data = await state.get_data()
 	context_data['user_id'] = msg.from_user.id
-	await order.create_order_from_balance(context_data)
 	await msg.answer('Створюємо ваше замовлення, декілька секунд...🫶🏼')
-	await sleep(5)
-	await msg.answer('🌹Ваше замовлення створено!🌹\n\nТТН буде в посиланні на це замовлення в вашому кабінеті',
-					reply_markup=reply.start_keyboard())
+	try:
+		await order.create_order_from_balance(context_data)
+	except:
+		await msg.answer('Вибачте але сталась якась помилка😔\n'
+						'Спробуйте трішки пізніше або зверніться до менеджера: @test_name')
+	else:
+		await sleep(5)
+		await msg.answer('🌹Ваше замовлення створено!🌹\n\nТТН буде в посиланні на це замовлення в вашому кабінеті',
+						reply_markup=reply.start_keyboard())
 	await state.clear()
 
 
@@ -509,11 +514,16 @@ async def finish_balance_accepted(msg: Message, state: FSMContext) -> None:
 	"""
 	context_data = await state.get_data()
 	context_data['user_id'] = msg.from_user.id
-	await order.create_order_from_balance(context_data)
 	await msg.answer('Створюємо ваше замовлення, декілька секунд...🫶🏼')
-	await sleep(5)
-	await msg.answer('🌹Ваше замовлення створено!🌹\n\nТТН буде в посиланні на це замовлення в вашому кабінеті',
-					reply_markup=reply.start_keyboard())
+	try:
+		await order.create_order_from_balance(context_data)
+	except:
+		await msg.answer('Вибачте але сталась якась помилка😔\n'
+						'Спробуйте трішки пізніше або зверніться до менеджера: @test_name')
+	else:
+		await sleep(5)
+		await msg.answer('🌹Ваше замовлення створено!🌹\n\nТТН буде в посиланні на це замовлення в вашому кабінеті',
+						reply_markup=reply.start_keyboard())
 	await state.clear()
 
 
@@ -541,11 +551,16 @@ async def finish_payfull_advance_accepted(msg: Message, state: FSMContext) -> No
 	"""
 	context_data = await state.get_data()
 	context_data['user_id'] = msg.from_user.id
-	await order.create_order_payfull(context_data)
 	await msg.answer('Створюємо ваше замовлення, декілька секунд...🫶🏼')
-	await sleep(5)
-	await msg.answer('🌹Ваше замовлення оформлено!🌹\n\nТТН буде в посиланні на це замовлення в вашому кабінеті',
-					reply_markup=reply.start_keyboard())
+	try:
+		await order.create_order_payfull(context_data)
+	except:
+		await msg.answer('Вибачте але сталась якась помилка😔\n'
+						'Спробуйте трішки пізніше або зверніться до менеджера: @test_name')
+	else:
+		await sleep(5)
+		await msg.answer('🌹Ваше замовлення створено!🌹\n\nТТН буде в посиланні на це замовлення в вашому кабінеті',
+						reply_markup=reply.start_keyboard())
 	await state.clear()
 
 
@@ -573,12 +588,18 @@ async def finish_payfull_advance_accepted(msg: Message, state: FSMContext) -> No
 	"""
 	context_data = await state.get_data()
 	context_data['user_id'] = msg.from_user.id
-	await order.create_order_payfull(context_data)
 	await msg.answer('Створюємо ваше замовлення, декілька секунд...🫶🏼')
-	await sleep(5)
-	await msg.answer('🌹Ваше замовлення оформлено!🌹\n\nТТН буде в посиланні на це замовлення в вашому кабінеті',
-					reply_markup=reply.start_keyboard())
+	try:
+		await order.create_order_payfull(context_data)
+	except:
+		await msg.answer('Вибачте але сталась якась помилка😔\n'
+						'Спробуйте трішки пізніше або зверніться до менеджера: @test_name')
+	else:
+		await sleep(5)
+		await msg.answer('🌹Ваше замовлення створено!🌹\n\nТТН буде в посиланні на це замовлення в вашому кабінеті',
+						reply_markup=reply.start_keyboard())
 	await state.clear()
+
 
 
 @router.message(FSMCreateOrder.FINISH_PAYFULL, F.text == 'Відмінити')
