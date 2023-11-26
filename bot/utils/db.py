@@ -53,22 +53,10 @@ def check_orders_balance(user_id) -> int:
     return int(user.balance)
 
 
-# TODO: переделать списание с баланса т.к. мы уже списываем с общего баланса, а не с отдельного заказа
 def write_off_balance(user_id, summ) -> None:
-    orders = OrderTG.objects.filter(Q(user_id=user_id) & Q(completed_order=True) &
-                                    Q(balance__gt=0)).order_by('balance')
-    flag, total = True, int(summ)
-    while flag:
-        for order in orders:
-            if total < order.balance:
-                order.balance -= total
-                order.save()
-                flag = False
-            else:
-                balance = order.balance
-                order.balance -= total - (total - order.balance)
-                total -= balance
-                order.save()
+    user = UserTG.objects.get(tg_id=user_id.tg_id)
+    user.balance -= int(summ)
+    user.save()
 
 
 @sync_to_async
@@ -80,6 +68,12 @@ def get_users_orders(user_id) -> OrderTG | list:
 
 @sync_to_async
 def get_orders_by_client_surname(user_id, surname) -> list:
+    """
+
+    :param user_id: ID user
+    :param surname: Surname client
+    :return: Orders list
+    """
     orders = OrderTG.objects.filter(
         user_id__tg_id=user_id,
         client_name__icontains=surname
