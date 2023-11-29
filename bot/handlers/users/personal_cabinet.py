@@ -7,6 +7,8 @@ from bot.utils.statesform import FSMSearchOrderFromProfile
 from bot.keyboards.base import reply
 from bot.keyboards.inline import user_profile_kb
 
+from math import ceil
+
 
 router = Router()
 
@@ -33,11 +35,50 @@ async def my_balance(msg: Message) -> None:
 async def my_orders(msg: Message) -> None:
 	user_id = msg.from_user.id
 	all_orders = await get_users_orders(user_id)
+	total_pages = ceil(len(all_orders) / 3)
+
 	if all_orders:
-		await msg.answer(text='Усі замовлення:', reply_markup=user_profile_kb.all_orders_kb(all_orders))
+		if len(all_orders) > 3:
+			await msg.answer(text='Усі замовлення:', reply_markup=user_profile_kb.all_orders_kb(all_orders[:3], total_pages))
+		else:
+			await msg.answer(text='Усі замовлення:', reply_markup=user_profile_kb.all_orders_kb(all_orders, total_pages))
 	else:
 		await msg.answer(text='Ви ще не здавали замовлення☹️',
 						reply_markup=reply.back_to_profile_kb())
+
+
+@router.callback_query(user_profile_kb.PaginationCallbackFactory.filter(F.action.in_(['prev', 'next'])))
+async def paginator_handler(call: CallbackQuery, callback_data: user_profile_kb.PaginationCallbackFactory) -> None:
+	# TODO: попробовать сделать логику в этом хендлере, а не в самое клаве all_orders_kb. Передавать уже отсюда
+	# TODO: нужные заказы
+	user_id = call.from_user.id
+	all_orders = await get_users_orders(user_id)
+	total_pages = ceil(len(all_orders) / 3)
+
+	# Текущая страница
+	page_num = int(callback_data.page)
+	# Предыдущая страница
+	if callback_data.action == 'prev':
+		page = page_num - 1 if page_num > 1 else 1
+	# Следующая страница
+	if callback_data.action == 'next':
+		# page = page_num + 1 if page_num < (len(all_orders) - 1) else page_num
+		page = page_num + 1 if page_num < total_pages else page_num
+
+	if page == 1:
+		await call.message.edit_text(
+			text='Усі замовлення:',
+			reply_markup=user_profile_kb.all_orders_kb(all_orders[:3], total_pages, page)
+		)
+	else:
+		start = (page * 3) - 3
+		end = start + 3
+		await call.message.edit_text(
+			text='Усі замовлення:',
+			reply_markup=user_profile_kb.all_orders_kb(all_orders[start:end], total_pages, page)
+		)
+
+	await call.answer()
 
 
 @router.message(F.text == 'Пошук замовлення🔍')
@@ -62,6 +103,18 @@ async def get_surname_client(msg: Message, state: FSMContext) -> None:
 		text='Замовлення за вашим запитом:🕵🏼',
 		reply_markup=user_profile_kb.found_orders_kb(found_orders))
 	await state.clear()
+
+
+# @router.callback_query(user_profile_kb.PaginationCallbackFactory.filter(F.action.in_(['prev', 'next'])))
+# async def paginator_handler(call: CallbackQuery, callback_data: user_profile_kb.PaginationCallbackFactory) -> None:
+# 	page_num = int(callback_data.page)
+# 	# Предыдущая страница
+# 	page = page_num - 1 if page_num > 0 else 0
+#
+# 	# Следующая страница
+# 	if callback_data.action == 'next':
+# 		page = page_num + 1
+
 
 
 @router.message(F.text == 'Допомога⚙️')
