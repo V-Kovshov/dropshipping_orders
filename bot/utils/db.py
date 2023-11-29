@@ -61,7 +61,7 @@ def write_off_balance(user_id, summ) -> None:
 
 @sync_to_async
 def get_users_orders(user_id) -> OrderTG | list:
-    orders = OrderTG.objects.filter(user_id__tg_id=user_id).order_by('date')
+    orders = OrderTG.objects.filter(user_id__tg_id=user_id).order_by('-date')
     orders_lst = [i for i in orders]
     return orders_lst
 
