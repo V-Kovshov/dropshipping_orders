@@ -1,12 +1,14 @@
 from aiogram import Router, F, Bot
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
+from aiogram.exceptions import TelegramBadRequest
 
 from bot.utils.db import check_orders_balance, get_users_orders, get_orders_by_client_surname, check_user_in_db
 from bot.utils.statesform import FSMSearchOrderFromProfile
 from bot.keyboards.base import reply
 from bot.keyboards.inline import user_profile_kb
 
+from contextlib import suppress
 from math import ceil
 
 
@@ -66,18 +68,19 @@ async def paginator_handler(call: CallbackQuery, callback_data: user_profile_kb.
 		page = page_num + 1 if page_num < total_pages else page_num
 
 	if page == 1:
-		await call.message.edit_text(
-			text='Усі замовлення:',
-			reply_markup=user_profile_kb.all_orders_kb(all_orders[:3], total_pages, page)
-		)
+		with suppress(TelegramBadRequest):
+			await call.message.edit_text(
+				text='Усі замовлення:',
+				reply_markup=user_profile_kb.all_orders_kb(all_orders[:3], total_pages, page)
+			)
 	else:
 		start = (page * 3) - 3
 		end = start + 3
-		await call.message.edit_text(
-			text='Усі замовлення:',
-			reply_markup=user_profile_kb.all_orders_kb(all_orders[start:end], total_pages, page)
-		)
-
+		with suppress(TelegramBadRequest):
+			await call.message.edit_text(
+				text='Усі замовлення:',
+				reply_markup=user_profile_kb.all_orders_kb(all_orders[start:end], total_pages, page)
+			)
 	await call.answer()
 
 
