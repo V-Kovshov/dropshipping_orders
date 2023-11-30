@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
+import datetime
 
 
 class UserTG(models.Model):
@@ -19,6 +20,8 @@ class UserTG(models.Model):
 
 
 class OrderTG(models.Model):
+    today = datetime.date.today()
+
     SIZES_LIST = [
         ('34', 34),
         ('35', 35),
@@ -33,7 +36,7 @@ class OrderTG(models.Model):
     user_id = models.ForeignKey(UserTG, on_delete=models.DO_NOTHING, verbose_name='Здав', null=True, blank=True)
     shoes_model = models.ForeignKey(to='Shoes', on_delete=models.DO_NOTHING, verbose_name='Модель')
     shoes_size = models.CharField(max_length=2, choices=SIZES_LIST, verbose_name='Розмір', null=True, blank=True)
-    date = models.DateField(auto_now_add=True, verbose_name='Дата ')
+    date = models.DateField(default=datetime.date.today, verbose_name='Дата ')
     client_name = models.CharField(max_length=64, verbose_name='ПІБ клієнта')
     client_phone = models.CharField(max_length=13, verbose_name='Телефон клієнта')
     other_data = models.TextField(verbose_name='Інші дані для відправки')
