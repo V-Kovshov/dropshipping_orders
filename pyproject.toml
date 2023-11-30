@@ -35,6 +35,7 @@ typing_extensions = "4.8.0"
 yarl = "1.9.2"
 requests = "^2.31.0"
 psycopg2-binary = "^2.9.9"
+datetime = "^5.3"
 
 
 
