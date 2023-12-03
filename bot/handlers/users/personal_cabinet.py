@@ -2,11 +2,15 @@ from aiogram import Router, F, Bot
 from aiogram.types import Message, CallbackQuery
 from aiogram.fsm.context import FSMContext
 from aiogram.exceptions import TelegramBadRequest
+from asgiref.sync import sync_to_async
 
-from bot.utils.db import check_orders_balance, get_users_orders, get_orders_by_client_surname, check_user_in_db
+from bot.utils.db import (check_orders_balance, get_users_orders, get_orders_by_client_surname, check_user_in_db,
+						  get_order_info)
 from bot.utils.statesform import FSMSearchOrderFromProfile
+from bot.utils.nova_post_api import get_status_parcel
 from bot.keyboards.base import reply
 from bot.keyboards.inline import user_profile_kb
+from bot.models import OrderTG
 
 from contextlib import suppress
 from math import ceil
@@ -132,4 +136,15 @@ async def back_to_profile(msg: Message):
 
 @router.callback_query(F.data.startswith('ord_'))
 async def order_information(call: CallbackQuery) -> None:
-	pass
+	order_context = await get_order_info(call.data)
+	photo = order_context['photo']
+	order_info = order_context['order_info']
+	client_info = order_context['client_info']
+	order_status = order_context['order_status']
+	await call.message.answer_photo(
+		photo=photo,
+		caption=f"{order_info}"
+				f"{client_info}"
+				f"{order_status}"
+	)
+	await call.answer()
