@@ -1,3 +1,4 @@
+from aiogram.types import FSInputFile
 from asgiref.sync import sync_to_async
 from django.db.models import Q
 
@@ -5,6 +6,33 @@ from bot.models import *
 import logging
 
 from bot.utils.nova_post_api import get_status_parcel
+
+
+@sync_to_async
+def get_order_info(data) -> dict:
+    order_id = data.split('_')[1]
+    order = OrderTG.objects.get(pk=order_id)
+    try:
+        invoice_status = get_status_parcel(order.invoice)
+    except:
+        invoice_status = '-'
+    url_photo = str(order.shoes_model.image.url)[1:]
+    photo = FSInputFile(url_photo)
+
+    order_info = (f'<b>Модель:</b> {order.shoes_model}\n'
+                  f'<b>Розмір:</b> {order.shoes_size}\n\n')
+    client_info = (f"<b>Ім'я:</b> {order.client_name}\n"
+                   f"<b>Телефон:</b> {order.client_phone}\n"
+                   f"<b>Адреса:</b> {order.other_data}\n\n")
+    order_status = (f"<b>Замовлення видане:</b> {'так' if order.issued else 'ні'}\n"
+                    f"<b>Номер ТТН:</b> {order.invoice if order.invoice else '-'}\n"
+                    f"<b>Статус ТТН:</b> {invoice_status}\n\n"
+                    )
+    return {'photo': photo,
+            'order_info': order_info,
+            'client_info': client_info,
+            'order_status': order_status
+            }
 
 
 @sync_to_async
@@ -30,7 +58,6 @@ def registration_user(context_data) -> None:
     UserTG.objects.create(tg_id=tg_id, name=name, username=username, phone=phone, bank_card=bank_card, balance=balance)
 
 
-# TODO: Решить когда будет делаться перерасчёт баланса
 @sync_to_async
 def check_orders_balance(user_id) -> int:
     balance = 0
