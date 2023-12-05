@@ -134,6 +134,11 @@ async def back_to_profile(msg: Message):
 	await private_cabinet(msg)
 
 
+@router.message(F.text == 'Назад на головну🏠')
+async def back_to_start(msg: Message) -> None:
+	await msg.answer(text='Ви повернулися на головну сторінку👇🏼', reply_markup=reply.start_keyboard())
+
+
 @router.callback_query(F.data.startswith('ord_'))
 async def order_information(call: CallbackQuery) -> None:
 	order_context = await get_order_info(call.data)
