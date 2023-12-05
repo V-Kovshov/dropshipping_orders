@@ -85,6 +85,7 @@ def profile_kb() -> ReplyKeyboardMarkup:
     kb_builder.button(text='Мої замовлення🛍')
     kb_builder.button(text='Пошук замовлення🔍')
     kb_builder.button(text='Допомога⚙️')
+    kb_builder.button(text='Назад на головну🏠')
 
     kb_builder.adjust(2)
 
