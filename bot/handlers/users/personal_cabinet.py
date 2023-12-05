@@ -87,6 +87,7 @@ async def paginator_handler(call: CallbackQuery, callback_data: user_profile_kb.
 @router.callback_query(F.data == 'back')
 async def back_btn(call: CallbackQuery) -> None:
 	await call.message.answer('Користуйся кнопками👇🏼', reply_markup=reply.profile_kb())
+	await call.answer()
 
 
 @router.message(F.text == 'Пошук замовлення🔍')
@@ -150,6 +151,7 @@ async def order_information(call: CallbackQuery) -> None:
 		photo=photo,
 		caption=f"{order_info}"
 				f"{client_info}"
-				f"{order_status}"
+				f"{order_status}",
+		reply_markup=user_profile_kb.back_btn()
 	)
 	await call.answer()
