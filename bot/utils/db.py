@@ -131,7 +131,7 @@ class CreateOrder:
     @sync_to_async
     def get_size(self, size_id: int) -> str:
         size = SizeQuantity.objects.get(id=size_id)
-        return f'{size.size}({size.centimeters}см)'
+        return f'{size.size} ({size.centimeters})'
 
     @sync_to_async
     def check_balance(self, user_id: int) -> int:
