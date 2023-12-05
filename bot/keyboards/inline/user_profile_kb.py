@@ -31,16 +31,9 @@ def all_orders_kb(arr, total_pages, page: int = 1) -> InlineKeyboardMarkup:
 	return kb.as_markup()
 
 
-def found_orders_kb(*args) -> InlineKeyboardMarkup:
-	orders_lst = list(*args)
+def back_btn(*args) -> InlineKeyboardMarkup:
 	kb = InlineKeyboardBuilder()
-	cnt = 1
-	for order in orders_lst:
-		kb.add(InlineKeyboardButton(
-			text=f'{cnt}. {order.date} | {order.client_name}',
-			callback_data=f'ord_{order.id}'
-		))
-		cnt += 1
-	kb.adjust(1)
+
+	kb.add(InlineKeyboardButton(text='Назад', callback_data='back'))
 
 	return kb.as_markup()
