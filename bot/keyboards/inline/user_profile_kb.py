@@ -14,7 +14,7 @@ def all_orders_kb(arr, total_pages, page: int = 1) -> InlineKeyboardMarkup:
 
 	cnt = 1 if page == 1 else (page * 10) - 9
 	for order in orders_lst:
-		date = f'{order.date.day}-{order.date.month}-{order.date.year}'
+		date = f'{order.date.day}-{order.date.month if order.date.month > 9 else f"0{order.date.month}"}-{order.date.year}'
 		kb.add(InlineKeyboardButton(text=f'{cnt}. {date} | {order.client_name}', callback_data=f'ord_{order.id}'))
 		cnt += 1
 	kb.adjust(1)
