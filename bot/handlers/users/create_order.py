@@ -1,9 +1,9 @@
-import logging
 import os
 from asyncio import sleep
 
 from aiogram import Router, F, Bot
-from aiogram.types import Message, CallbackQuery, FSInputFile, File
+from aiogram.types import Message, CallbackQuery, FSInputFile
+from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
 from bot.keyboards.base import reply
@@ -18,6 +18,7 @@ order = CreateOrder()
 
 
 @router.message(F.text == 'Оформити замовлення🛒')
+@router.message(Command(commands=['create_order']))
 async def place_order(msg: Message, state: FSMContext) -> None:
 	"""
 	Хендлер перевіряє чи клієнт зареєстрований та отримує від клієнта артикул товару.
