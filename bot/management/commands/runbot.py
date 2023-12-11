@@ -6,11 +6,11 @@ from aiogram.fsm.storage.redis import RedisStorage
 
 from bot.handlers.users import start, registration, create_order, personal_cabinet
 from bot.config import settings
-from bot.utils.commands import set_commands
+from bot.utils.commands import unregistered_users_commands
 
 
 async def start_bot(bot: Bot) -> None:
-	await set_commands(bot)
+	await unregistered_users_commands(bot)
 	await bot.send_message(settings.bots.admin_id[0], f"Bot ran!")
 
 
