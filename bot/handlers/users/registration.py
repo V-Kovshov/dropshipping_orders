@@ -1,16 +1,18 @@
-from aiogram import Router
+from aiogram import Router, Bot
 from aiogram.types import Message
 from aiogram.filters import Command
 from aiogram.fsm.context import FSMContext
 
+from bot.utils.commands import registered_users_commands
 from bot.utils.db import registration_user
 from bot.utils.statesform import FSMRegisterForm
 from bot.keyboards.base import reply
+from bot.filters.filters import RegisterUserFilter
 
 router = Router()
 
 
-@router.message(Command(commands='registration'))
+@router.message(Command(commands='registration'), RegisterUserFilter())
 async def start_registration(msg: Message, state: FSMContext) -> None:
     await msg.answer(f"<b>{msg.from_user.first_name}</b>, введіть ваше ім'я: ")
     await state.set_state(FSMRegisterForm.GET_NAME)
@@ -23,7 +25,11 @@ async def get_name(msg: Message, state: FSMContext) -> None:
                      reply_markup=reply.get_phone_keyboard())
     await state.update_data(name=msg.text)
     await state.update_data(tg_id=msg.from_user.id)
-    await state.update_data(username=msg.from_user.username)
+    try:
+        await state.update_data(username=msg.from_user.username)
+    except:
+        await state.update_data(username=' ')
+
     await state.update_data(balance=0)
 
     await state.set_state(FSMRegisterForm.GET_PHONE)
@@ -58,11 +64,13 @@ async def get_card(msg: Message, state: FSMContext) -> None:
 
 
 @router.message(FSMRegisterForm.FINISH_REGISTER)
-async def finish_register(msg: Message, state: FSMContext) -> None:
+async def finish_register(msg: Message, state: FSMContext, bot: Bot) -> None:
     if msg.text == '✅Все вірно, підтверджую реєстрацію':
         context_data = await state.get_data()
         await registration_user(context_data)
         await msg.answer('Ви успішно зареєстровані🎉', reply_markup=reply.start_keyboard())
+        await registered_users_commands(bot)
+
     elif msg.text == '📛Є помилкові дані, почнемо заново':
         await state.clear()
         await msg.answer('Натисніть <u><b>/registration</b></u>,\nдля того, щоб розпочати заново.')
