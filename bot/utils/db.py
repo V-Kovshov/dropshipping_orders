@@ -9,6 +9,15 @@ from bot.utils.nova_post_api import get_status_parcel
 
 
 @sync_to_async
+def get_availability(arr) -> str:
+    arr_lst = [i for i in arr]
+    output = ''
+    for item in arr_lst:
+        output += f"▫️{item}шт.\n"
+    return output
+
+
+@sync_to_async
 def get_order_info(data) -> dict:
     order_id = data.split('_')[1]
     order = OrderTG.objects.get(pk=order_id)
@@ -39,10 +48,8 @@ def get_order_info(data) -> dict:
 def check_user_in_db(user_id) -> bool:
     try:
         user = UserTG.objects.get(tg_id=user_id)
-        logging.info('Получили юзера')
         return True
     except:
-        logging.info('Нет такого юзера')
         return False
 
 
@@ -50,7 +57,7 @@ def check_user_in_db(user_id) -> bool:
 def registration_user(context_data) -> None:
     tg_id = context_data.get('tg_id')
     name = context_data.get('name')
-    username = context_data.get('username')
+    username = context_data.get('username') or ''
     phone = context_data.get('phone')
     bank_card = context_data.get('bank_card')
     balance = context_data.get('balance')
