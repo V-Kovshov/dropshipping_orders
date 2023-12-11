@@ -1,6 +1,5 @@
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from asgiref.sync import async_to_sync
 
 from bot.utils.db import CreateOrder
 
