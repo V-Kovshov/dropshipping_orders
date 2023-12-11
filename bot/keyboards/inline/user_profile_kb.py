@@ -37,3 +37,26 @@ def back_btn(*args) -> InlineKeyboardMarkup:
 	kb.add(InlineKeyboardButton(text='Назад', callback_data='back'))
 
 	return kb.as_markup()
+
+
+def shoes_inline_kb(*args) -> InlineKeyboardMarkup:
+	models_lst = list(*args)
+	kb = InlineKeyboardBuilder()
+	for model in models_lst:
+		kb.add(InlineKeyboardButton(text=str(model), callback_data=str(model.id)))
+	kb.adjust(1)
+	kb.row(
+		InlineKeyboardButton(text='Ввести наново♻️', callback_data='back_to_availability'),
+		width=1
+	)
+	return kb.as_markup()
+
+
+def size_inline_kb() -> InlineKeyboardMarkup:
+	kb = InlineKeyboardBuilder()
+	kb.row(
+		InlineKeyboardButton(text='Ввести наново♻️', callback_data='back_to_availability'),
+		InlineKeyboardButton(text='Назад на головну❎', callback_data='back_to_main'),
+		width=1
+	)
+	return kb.as_markup()
