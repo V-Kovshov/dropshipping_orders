@@ -33,3 +33,8 @@ class FSMCreateOrder(StatesGroup):
 
 class FSMSearchOrderFromProfile(StatesGroup):
 	SURNAME_CLIENT = State()
+
+
+class FSMCheckAvailable(StatesGroup):
+	SEARCH_MODEL = State()
+	CHOOSE_MODEL = State()
