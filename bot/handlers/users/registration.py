@@ -12,7 +12,7 @@ from bot.filters.filters import RegisterUserFilter
 router = Router()
 
 
-@router.message(Command(commands='registration'), RegisterUserFilter())
+@router.message(Command('registration'), RegisterUserFilter())
 async def start_registration(msg: Message, state: FSMContext) -> None:
     await msg.answer(f"<b>{msg.from_user.first_name}</b>, введіть ваше ім'я: ")
     await state.set_state(FSMRegisterForm.GET_NAME)
