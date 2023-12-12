@@ -3,15 +3,13 @@ from aiogram.filters import Command
 from aiogram.types import Message, CallbackQuery, FSInputFile
 from aiogram.fsm.context import FSMContext
 from aiogram.exceptions import TelegramBadRequest
-from asgiref.sync import sync_to_async
 
 from bot.utils.db import (check_orders_balance, get_users_orders, get_orders_by_client_surname, check_user_in_db,
 						get_order_info, CreateOrder as Order, get_availability)
 from bot.utils.statesform import FSMSearchOrderFromProfile, FSMCheckAvailable
-from bot.utils.nova_post_api import get_status_parcel
 from bot.keyboards.base import reply
-from bot.keyboards.inline import user_profile_kb, order_kb
-from bot.models import OrderTG
+from bot.keyboards.inline import user_profile_kb
+from bot.handlers.users.registration import start_registration
 
 from contextlib import suppress
 from math import ceil
@@ -31,6 +29,33 @@ async def private_cabinet(msg: Message) -> None:
 		user_msg = '🤔Для початку давай зареєструємо твій обліковий запис.\n\n' \
 				'Щоб почати реєстрацію - натисніть\n<u><b>/registration</b></u>'
 		await msg.answer(user_msg, reply_markup=reply.start_keyboard())
+
+
+@router.message(Command('requisites'))
+async def get_requisites(msg: Message) -> None:
+	data = "🔺<b>Реквізити</b>🔺\n" \
+		"<b>Установа банку:</b> ПриватБанк\n\n"\
+		"<b>МФО банку:</b> 305299\n\n" \
+		"<b>Одержувач платежу:</b>\n" \
+		"ФОП ДЕМКІВ АЛІНА РУСЛАНІВНА\n\n" \
+		"<b>IBAN:</b>\nUA513515330000026007052157707\n\n" \
+		"<b>Рахунок отримувача:</b>\n26007052157707\n\n" \
+		"<b>РНУКПН одержувача:</b>\n3260704780\n\n" \
+		"<b>Призначення платежу:</b>\nОплата за товар і ПРІЗВИЩЕ КЛІЄНТА\n\n" \
+		"💌<b>Зв'язатися з менеджером:</b>\n@roza_shoes_drop"
+	await msg.answer(data, reply_markup=reply.start_keyboard())
+
+
+@router.message(Command('registration'))
+async def go_to_start_registration(msg: Message, state: FSMContext) -> None:
+	user_id = msg.from_user.id
+	user_registered = await check_user_in_db(user_id)
+	if not user_registered:
+		await start_registration(msg, state)
+		await state.clear()
+	else:
+		await msg.answer('Ви вже зареєстровані.', reply_markup=reply.profile_kb())
+		await state.clear()
 
 
 @router.message(F.text == 'Мій баланс💰')
@@ -162,8 +187,14 @@ async def order_information(call: CallbackQuery) -> None:
 
 @router.message(Command('check_availability'))
 async def check_availability(msg: Message, state: FSMContext) -> None:
-	await msg.answer('📝Введіть артикул товару:')
+	await msg.answer('📝Введіть артикул товару:', reply_markup=reply.back_to_main_kb())
 	await state.set_state(FSMCheckAvailable.SEARCH_MODEL)
+
+
+@router.message(F.text == 'Відмінити❌')
+async def cancel(msg: Message, state: FSMContext) -> None:
+	await private_cabinet(msg)
+	await state.clear()
 
 
 @router.message(FSMCheckAvailable.SEARCH_MODEL)
@@ -184,6 +215,7 @@ async def choose_model(call: CallbackQuery, state: FSMContext) -> None:
 		await state.update_data(model_id=int(call.data))
 	elif call.data == 'back_to_availability':
 		await check_availability(call.message, state)
+		await state.clear()
 		await call.answer()
 		return
 
@@ -205,6 +237,7 @@ async def choose_model(call: CallbackQuery, state: FSMContext) -> None:
 @router.callback_query(F.data == 'back_to_availability')
 async def back_to_availability(call: CallbackQuery, state: FSMContext) -> None:
 	await check_availability(call.message, state)
+	await state.clear()
 	await call.answer()
 
 
@@ -213,18 +246,3 @@ async def back_to_main(call: CallbackQuery, state: FSMContext) -> None:
 	await private_cabinet(call.message)
 	await state.clear()
 	await call.answer()
-
-
-@router.message(Command('requisites'))
-async def get_requisites(msg: Message) -> None:
-	data = "🔺<b>Реквізити</b>🔺\n" \
-		"<b>Установа банку:</b> ПриватБанк\n\n"\
-		"<b>МФО банку:</b> 305299\n\n" \
-		"<b>Одержувач платежу:</b>\n" \
-		"ФОП ДЕМКІВ АЛІНА РУСЛАНІВНА\n\n" \
-		"<b>IBAN:</b>\nUA513515330000026007052157707\n\n" \
-		"<b>Рахунок отримувача:</b>\n26007052157707\n\n" \
-		"<b>РНУКПН одержувача:</b>\n3260704780\n\n" \
-		"<b>Призначення платежу:</b>\nОплата за товар і ПРІЗВИЩЕ КЛІЄНТА\n\n" \
-		"💌<b>Зв'язатися з менеджером:</b>\n@roza_shoes_drop"
-	await msg.answer(data, reply_markup=reply.start_keyboard())
