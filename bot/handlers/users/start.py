@@ -24,7 +24,7 @@ async def get_start(msg: types.Message, bot: Bot) -> None:
         await bot.delete_my_commands()
         await registered_users_commands(bot)
     await msg.answer(
-        f"Вітаємо вас в боті &#127801<b>Roza Shoes</b>&#127801\r\n\nОберіть потрібний потрібний вам пункт:",
+        f"Вітаємо вас в боті &#127801<b>Roza Shoes</b>&#127801\r\n\nОберіть потрібний вам пункт:",
         reply_markup=reply.start_keyboard())
 
 
