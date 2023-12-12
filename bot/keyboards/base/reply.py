@@ -100,3 +100,13 @@ def back_to_profile_kb() -> ReplyKeyboardMarkup:
     kb_builder.adjust(1)
 
     return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
+
+
+def back_to_main_kb() -> ReplyKeyboardMarkup:
+    kb_builder = ReplyKeyboardBuilder()
+
+    kb_builder.button(text='Відмінити❌')
+
+    kb_builder.adjust(1)
+
+    return kb_builder.as_markup(resize_keyboard=True, one_time_keyboard=True)
