@@ -359,7 +359,7 @@ async def balance_pay_wrong(msg: Message, state: FSMContext) -> None:
 	await state.set_state(FSMCreateOrder.SCREEN_PAY)
 
 
-@router.message(FSMCreateOrder.SCREEN_PAY_ADVANCE)
+@router.message(F.text.regexp(r'^\d{1,4},\d{1,4}$'), FSMCreateOrder.SCREEN_PAY_ADVANCE)
 async def screen_pay_advance(msg: Message, state: FSMContext) -> None:
 	"""
 	Хендлер отримує суму оплати та запитує скрін від юзера.
@@ -372,6 +372,20 @@ async def screen_pay_advance(msg: Message, state: FSMContext) -> None:
 	await msg.answer('Надішліть скрін з оплатою:\n\n'
 					"Обов'язково в коментарях до оплати напишіть прізвище клієнта.")
 	await state.set_state(FSMCreateOrder.CHECK_ORDER_SCREEN_ADVANCE)
+
+
+@router.message(FSMCreateOrder.SCREEN_PAY_ADVANCE)
+async def screen_pay_advance(msg: Message, state: FSMContext) -> None:
+	"""
+	Якщо юзер невірно ввів аванс та суму накладного платежу.
+
+	:param msg: Message
+	:param state: FSMContext
+	:return: None
+	"""
+	await msg.answer("Ви зробили помилку. Спробуйте ще раз.\n\n"
+					"<b>Наприклад: <u>200,1650</u>\n(без будь-яких інших символів)</b>")
+	await screen_pay(msg, state)
 
 
 @router.message(lambda m: m.photo,  FSMCreateOrder.CHECK_ORDER_SCREEN_ADVANCE)
